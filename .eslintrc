@@ -1,0 +1,63 @@
+{
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "eslint:recommended",
+    "airbnb",
+    "plugin:import/errors",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/jsx-runtime"
+  ],
+  "plugins": [
+    "jsx-a11y",
+    "destructuring-newline"
+  ],
+  "rules": {
+    "array-bracket-newline": ["error", { "minItems": 2 }],
+    "array-element-newline": ["error", { "minItems": 2 }],
+    "arrow-body-style": 0,
+    "comma-dangle": [1, "always-multiline"],
+    "destructuring-newline/object-property-newline": 2,
+    "indent": [1, 2],
+    "no-continue": 0,
+    "no-unused-vars": 1,
+    // "no-noninteractive-element-interactions": 0,
+    "no-underscore-dangle": 0,
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": false }],
+    "object-curly-newline": ["error", {
+      "ObjectExpression": {
+        "multiline": true,
+        "minProperties": 2
+      },
+      "ObjectPattern": {
+        "multiline": true,
+        "minProperties": 2,
+      },
+      "ImportDeclaration": {
+        "multiline": true,
+        "minProperties": 2
+      }
+      }],
+      "quotes": [2, "single"],
+      "react/destructuring-assignment": 0,
+      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+      "react/jsx-props-no-spreading": 0,
+      "react/jsx-one-expression-per-line": 0,
+    "react/jsx-fragments": 0,
+    "react/function-component-definition": [2, {
+      "namedComponents": "arrow-function",
+      "unnamedComponents": "arrow-function"
+    }],
+    "semi": 1,
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "globals": {
+  }
+}
