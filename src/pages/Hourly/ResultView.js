@@ -143,7 +143,10 @@ const ResultView = (props) => {
       <SectionWrapper>
         <Heading level={3} palette="black">근무시간 정보</Heading>
         <StyledInfoCard
-          info={[{ label: '총 근무시간' }]}
+          info={[{
+            label: '총 근무시간',
+            value: result.hoursWorked,
+          }]}
         />
       </SectionWrapper>
       <PageAction actions={[]}>

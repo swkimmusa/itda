@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0a828854.css",
+    "main.js": "/static/js/main.40143fd7.js",
+    "static/js/787.43d5e83a.chunk.js": "/static/js/787.43d5e83a.chunk.js",
+    "static/media/hourly.svg": "/static/media/hourly.5d8e83ff7d7beea07069529f053ab3cd.svg",
+    "static/media/calc.svg": "/static/media/calc.c83f46e6170b4d740e1ffc1cad76f969.svg",
+    "static/media/calendar.svg": "/static/media/calendar.23554a4c7e9ebf444ddc005ecf54b675.svg",
+    "static/media/yearly.svg": "/static/media/yearly.2f806ead96d58909ee1beabe3b21ec33.svg",
+    "static/media/home-background.png": "/static/media/home-background.3ecce51a72a9c45f0cee.png",
+    "service-worker.js": "/service-worker.js",
+    "static/media/hourly.png": "/static/media/hourly.e1fdd231f804d1104869.png",
+    "static/media/calc.png": "/static/media/calc.8716bd29c09c6fbe3612.png",
+    "static/media/calendar.png": "/static/media/calendar.cd325fe9b889d206c5f8.png",
+    "static/media/yearly.png": "/static/media/yearly.76cf5ecd72838374ce5f.png",
+    "static/media/loader.svg": "/static/media/loader.ef114f6846ebe85416ed94219d390c58.svg",
+    "index.html": "/index.html",
+    "static/media/logo.svg": "/static/media/logo.f9568f61eb0d27b033f63d1721c69a9c.svg",
+    "static/media/caret.svg": "/static/media/caret.16a17203d4ad8d1feded79acbbd7931b.svg",
+    "static/media/x.svg": "/static/media/x.16a17203d4ad8d1feded79acbbd7931b.svg",
+    "main.0a828854.css.map": "/static/css/main.0a828854.css.map",
+    "main.40143fd7.js.map": "/static/js/main.40143fd7.js.map",
+    "787.43d5e83a.chunk.js.map": "/static/js/787.43d5e83a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0a828854.css",
+    "static/js/main.40143fd7.js"
+  ]
+}
