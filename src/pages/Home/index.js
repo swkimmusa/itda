@@ -1,8 +1,8 @@
-// import { connect } from 'react-redux';
 import {
   useNavigate,
   useLocation,
 } from 'react-router-dom';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import {
   size, palette,
@@ -21,6 +21,8 @@ import calendar from '../../assets/image/calendar.png';
 import yearly from '../../assets/image/yearly.png';
 import hourly from '../../assets/image/hourly.png';
 import CalcSummHeader from '../../components/molecules/CalcSummHeader';
+
+import { hourlyCalc } from '../../services/calculator';
 
 const Wrapper = styled(Flex)`
   flex: 1;
@@ -82,8 +84,10 @@ const HistorySection = styled(SectionContainer)`
 `;
 
 const HistoryCardSection = styled(Flex)`
-  flex-direction: column;
+  flex-direction: row;
   margin-top: 5px;
+  flex-wrap: nowrap;
+  overflow: auto;
 `;
 const StyledCalcSummHeader = styled(CalcSummHeader)`
   margin-top: 5px;
@@ -95,6 +99,7 @@ const Home = ({
   // user,
   // role,
   // visited,
+  calculationList,
   signInError,
 }) => {
   const location = useLocation();
@@ -109,7 +114,8 @@ const Home = ({
   const { from } = location.state || { from: { pathname: getDefaultPathName() } };
 
   // if (authenticated) return <Navigate to={from} />; // todo
-
+  const keys = Object.keys(calculationList);
+  console.log(keys);
   return (
     <Wrapper>
       <HeaderContainer>
@@ -131,7 +137,24 @@ const Home = ({
           최근 계산 내역
         </Heading>
         <HistoryCardSection>
-          <StyledCalcSummHeader white />
+          {keys.map((k) => {
+            const currentCalculation = hourlyCalc(calculationList[k]);
+            const { result } = currentCalculation;
+            return (
+              <StyledCalcSummHeader
+                key={k}
+                white
+                title={result.name}
+                hourly={result.hourlyWage}
+                type={result.conversionType}
+                beforeTax={result.totalPay}
+                afterTax={result.netPay}
+                // beforeTax: 321000,
+                // afterTax: 321000,
+                // date: moment().toISOString(),
+              />
+            );
+          })}
         </HistoryCardSection>
       </HistorySection>
     </Wrapper>
@@ -140,4 +163,6 @@ const Home = ({
 
 Home.propTypes = { };
 
-export default Home;
+const mapStateToProps = (state, ownProps) => ({ calculationList: state.calculation.list });
+// const mapDispatchToProps = (dispatch) => ({ setListAction: (v) => dispatch(v) });
+export default connect(mapStateToProps)(Home);

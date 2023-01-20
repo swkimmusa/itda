@@ -5,8 +5,10 @@ import {
   font, palette,
 } from 'styled-theme';
 import { ifProp } from 'styled-tools';
+import BaseInput, { styles } from './BaseInput';
 import Flex from '../../atoms/Flex';
 import ButtonRadio from '../ButtonRadio';
+import Text from '../../atoms/P';
 
 const borderColor = ({
   disabled,
@@ -24,52 +26,6 @@ const hoverBorderColor = ({ disabled }) => {
 const checkBorderColor = ({ disabled }) => {
   return disabled ? palette('grayscale', 0) : palette('primary', 0);
 };
-
-const styles = css`
-  font-family: ${font('primary')};
-  font-size: 16px;
-  width: 100%;
-  ${ifProp(
-    { type: 'textarea' },
-    css`
-      height: auto;
-    `,
-    css`
-      min-height: 24px;
-    `,
-  )};
-  ${ifProp(
-    { type: 'textarea' },
-    css`
-      min-height: 24px;
-    `,
-  )} padding: ${ifProp({ type: 'textarea' }, '8px', '0 8px')};
-  box-sizing: border-box;
-  color: ${ifProp('disabled', palette('grayscale', 0), palette('black', 0))};
-  background-color: ${ifProp('disabled', palette('grayscale', 0), palette('grayscale', 2))};
-  border: 2px solid ${borderColor};
-  border-radius: 12px;
-  padding: 16px 20px;
-  outline: none;
-
-  &[type='checkbox'],
-  &[type='radio'] {
-    display: inline-block;
-    border: 0;
-    border-radius: 0;
-    width: auto;
-    height: auto;
-    margin: 0 8px 0 0;
-  }
-
-  &::placeholder {
-    color: ${palette('grayscale', 0)};
-  }
-
-  &:focus {
-    border-color: ${palette('primary', 0)};
-  }
-`;
 
 const Wrapper = styled.label`
   display: flex;
@@ -150,21 +106,26 @@ const Wrapper = styled.label`
 const StyledTextarea = styled.textarea`
   ${styles};
 `;
-const StyledInput = styled.input`
-  ${styles};
-`;
 const LabelWrapper = styled(Flex)`
   left: 8px;
   margin-bottom: 20px;
   font-family: ${font('primary')};
   font-size: 18px;
+`;
+const Label = styled(Text)`
   color: ${ifProp('disabled', palette('grayscale', 4), palette('black', 0))};
+  margin-right: 8px;
+`;
+const RequiredText = styled(Text)`
+  color: ${palette('primary', 0)};
+  white-space: nowrap;
 `;
 
 const Input = ({ ...props }) => {
   const {
     type,
     label,
+    required,
     inputStyle,
   } = props;
   if (type === 'textarea') {
@@ -173,9 +134,16 @@ const Input = ({ ...props }) => {
   if (type === 'radio' || type === 'checkbox') {
     return (
       <Wrapper {...props}>
-        {label && <LabelWrapper>{label}</LabelWrapper>}
-        {type === 'checkbox' && <StyledInput {...props} style={inputStyle} />}
-        {type !== 'checkbox' && <StyledInput {...props} style={inputStyle} />}
+        {label ? (
+          <LabelWrapper>
+            <Label>
+              {label}
+            </Label>
+            {!required && <RequiredText>(선택)</RequiredText>}
+          </LabelWrapper>
+        ) : null}
+        {type === 'checkbox' && <BaseInput {...props} style={inputStyle} />}
+        {type !== 'checkbox' && <BaseInput {...props} style={inputStyle} />}
         {type === 'radio' && <span className="check" />}
       </Wrapper>
     );
@@ -183,7 +151,14 @@ const Input = ({ ...props }) => {
   if (type === 'buttonSelect') {
     return (
       <Wrapper {...props}>
-        {label && <LabelWrapper>{label}</LabelWrapper>}
+        {label ? (
+          <LabelWrapper>
+            <Label>
+              {label}
+            </Label>
+            {!required && <RequiredText>(선택)</RequiredText>}
+          </LabelWrapper>
+        ) : null}
         <ButtonRadio
           {...props}
           onSelect={(v) => props.setMetaValue(v)}
@@ -192,11 +167,18 @@ const Input = ({ ...props }) => {
       </Wrapper>
     );
   }
-  console.log(props);
+
   return (
     <Wrapper {...props}>
-      {label && <LabelWrapper>{label}</LabelWrapper>}
-      <StyledInput {...props} />
+      {label ? (
+        <LabelWrapper>
+          <Label>
+            {label}
+          </Label>
+          {!required && <RequiredText>(선택)</RequiredText>}
+        </LabelWrapper>
+      ) : null}
+      <BaseInput {...props} />
     </Wrapper>
   );
 };

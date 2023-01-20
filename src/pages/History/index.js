@@ -1,4 +1,4 @@
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 import {
   Navigate,
   useLocation,
@@ -11,6 +11,7 @@ import {
 import Text from '../../components/atoms/P';
 
 import Flex from '../../components/atoms/Flex';
+import Link from '../../components/atoms/Link';
 import Button from '../../components/atoms/Button';
 import CalcSummHeader from '../../components/molecules/CalcSummHeader';
 import propTypes from '../../propTypes';
@@ -18,11 +19,14 @@ import Heading from '../../components/atoms/Heading';
 import ButtonRadio from '../../components/molecules/ButtonRadio';
 import PageAction from '../../components/organisms/PageAction';
 import useQueryParams from '../../hooks/useQueryParams';
+import calcActions from '../../store/calculation/actions';
 
 import calc from '../../assets/image/calc.png';
 import calendar from '../../assets/image/calendar.png';
 import yearly from '../../assets/image/yearly.png';
 import hourly from '../../assets/image/hourly.png';
+
+import { hourlyCalc } from '../../services/calculator';
 
 const Wrapper = styled(Flex)`
   flex: 1;
@@ -81,14 +85,23 @@ const ErrorWrapper = styled.div`
   }
 `;
 
-const History = ({}) => {
+const History = ({
+  calculationList,
+  ...otherProps
+}) => {
   const {
     queryParams,
     setQueryParams,
   } = useQueryParams(
     { initialQueryParams: { tab: 'hourly' } },
   );
-
+  console.log(calculationList);
+  const { tab } = queryParams;
+  const keys = Object.keys(calculationList);
+  const filteredKeys = keys.filter((key) => calculationList[key].type === tab);
+  console.log(keys);
+  console.log(tab);
+  console.log(filteredKeys);
   return (
     <Wrapper>
       <HeaderContainer>
@@ -96,7 +109,7 @@ const History = ({}) => {
         <ButtonRadio
           style={{ marginTop: 20 }}
           highlight
-          selected={queryParams.tab}
+          selected={tab}
           onSelect={(v) => setQueryParams((qp) => ({
             ...qp,
             tab: v,
@@ -128,16 +141,35 @@ const History = ({}) => {
       <SectionContainer>
         <TotalSection>
           <TotalText>
-            전체 3 건
+            전체 {keys.length} 건
           </TotalText>
           <TotalCardSection>
-            {[
-              1,
-              2,
-              3,
-            ].map((v) => (
-              <StyledCalcSummHeader key={v} />
-            ))}
+            {filteredKeys.map((k) => {
+              const currentCalculation = hourlyCalc(calculationList[k]);
+              const { result } = currentCalculation;
+              console.log(result);
+              return (
+                <Link to={`/hourly/result/${k}`} key={k}>
+                  <StyledCalcSummHeader
+                    title={result.name}
+                    hourly={result.hourlyWage}
+                    type={result.conversionType}
+                    beforeTax={result.totalPay}
+                    afterTax={result.netPay}
+                    onDelete={(e) => {
+                      console.log('stopping prop');
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      calcActions.deleteCalc(k);
+                    }}
+                    // beforeTax: 321000,
+                    // afterTax: 321000,
+                    // date: moment().toISOString(),
+                  />
+                </Link>
+              );
+            })}
           </TotalCardSection>
         </TotalSection>
       </SectionContainer>
@@ -153,4 +185,6 @@ const History = ({}) => {
 
 History.propTypes = { };
 
-export default History;
+const mapStateToProps = (state, ownProps) => ({ calculationList: state.calculation.list });
+// const mapDispatchToProps = (dispatch) => ({ setListAction: (v) => dispatch(v) });
+export default connect(mapStateToProps)(History);

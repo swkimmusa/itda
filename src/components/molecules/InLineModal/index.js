@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import startCase from 'lodash/startCase';
@@ -5,79 +7,68 @@ import { palette } from 'styled-theme';
 import { ifProp } from 'styled-tools';
 
 import Link from '../../atoms/Link';
+import Flex from '../../atoms/Flex';
 import Button from '../../atoms/Button';
 import Icon from '../../atoms/Icon';
-import Flex from '../../atoms/Flex/index';
 
-const Wrapper = styled.div`
-  position: fixed;
-  height: 100%;
-  display: flex;
+const Wrapper = styled(Flex)`
+  display: ${ifProp('hidden', 'none', 'flex')};
   flex-direction: column;
-  width: ${(props) => (`${props.width}px`)};
-  background-color: ${palette('white', 0)};
-  /* background-color: #37C5B9; */
-  align-items: center;
-  overflow-y: auto;
-  border-right: 2px solid #ECECEC;
-  z-index: 2;
 `;
 
 const Container = styled(Flex)`
+  justify-content: space-between;
+  background-color: ${palette('black', 0)};
+  border-radius: 12px;
+  flex-direction: row;
   padding: 20px;
-  margin-top: 24px;
-  margin-bottom: 48px;
-  width: 100%;
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    margin: 0;
-    padding: 0;
-  }
-`;
-const LogoWrapper = styled.div`
-  padding: 15px;
-  background-color: ${palette('white', 0)};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-top: 28px;
+  position: relative;
 `;
 
-const MenuLink = styled(Link)`
+const Content = styled(Flex)`
+  color: ${palette('white', 0)};
+  font-size: 14px;
+  line-height: 20px;
+`;
+
+const CaretContainer = styled(Flex)`
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -1px;
+`;
+
+const CloseButton = styled(Button)`
   display: flex;
   padding: 16px 0;
-  color: ${palette('black', 0)};;
-  padding: 25px 35px;
-  border-left: 4px solid transparent;
-
-  &.current-link,
-  &:hover,
-  &:focus {
-    color: ${palette('black', 0)};;
-    background-color: #E9F4F5;
-    border-left: 4px solid ${palette('primary', 0)};
-    text-decoration: none;
-  }
 `;
 
 const InlineModal = ({
   width,
   links,
+  showOnce,
+  children,
+  hidden,
   onClose,
-}) => (
-  <Wrapper width={width}>
-    <Content>
-      {...children}
-    </Content>
-    <Button>
-      <Icon icon="x" height={14} width={14} />
-    </Button>
-  </Wrapper>
-);
+}) => {
+  const [
+    internalHidden,
+    setInternalHidden,
+  ] = useState(false);
+  return (
+    <Wrapper hidden={hidden || (showOnce ? internalHidden : false)}>
+      <Container>
+        <CaretContainer>
+          <Icon icon="caret" height={10} />
+        </CaretContainer>
+        <Content>
+          {children}
+        </Content>
+        <Icon icon="x" height={14} onClick={() => { console.log('sdfsdf'); setInternalHidden(true); }} />
+      </Container>
+    </Wrapper>
+  );
+};
 
 InlineModal.defaultProps = {
   caretPos: 0,

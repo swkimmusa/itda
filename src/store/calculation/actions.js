@@ -13,4 +13,10 @@ export default {
       id,
     });
   },
+  deleteCalc: (id) => {
+    store.dispatch({
+      type: getType('DELETE_CALC'),
+      payload: id,
+    });
+  },
 };

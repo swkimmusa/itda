@@ -12,6 +12,8 @@ import { ReactComponent as CalcIcon } from './icons/calc.svg';
 import { ReactComponent as CalendarIcon } from './icons/calendar.svg';
 import { ReactComponent as YearlyIcon } from './icons/yearly.svg';
 import { ReactComponent as HourlyIcon } from './icons/hourly.svg';
+import { ReactComponent as EditIcon } from './icons/edit.svg';
+import { ReactComponent as DeleteIcon } from './icons/delete.svg';
 
 const ReactIcons = {
   loader: LoaderIcon,
@@ -22,6 +24,8 @@ const ReactIcons = {
   calendar: CalendarIcon,
   yearly: YearlyIcon,
   hourly: HourlyIcon,
+  edit: EditIcon,
+  delete: DeleteIcon,
 };
 
 const fillStyle = css`

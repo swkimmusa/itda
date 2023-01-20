@@ -2,16 +2,24 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { palette } from 'styled-theme';
-
+import { format } from 'number-currency-format';
+import {
+  formatNumber, formatCurrency,
+} from '../../../services/formatCurrency';
 import Card from '../../atoms/Card';
 import P from '../../atoms/P';
 import Flex from '../../atoms/Flex';
+import Icon from '../../atoms/Icon';
 
+const StyledCard = styled(Card)`
+  padding: 20px;
+`;
 const TitleRow = styled(Flex)`
   justify-content: space-between;
+  align-items: flex-start;
 `;
 const Title = styled(P)`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 `;
 const DateP = styled(P)`
@@ -39,31 +47,40 @@ const CalcSummHeader = ({
   beforeTax,
   afterTax,
   date,
+  white,
+  onDelete,
   ...props
 }) => {
   return (
-    <Card
+    <StyledCard
       {...props}
+      white={white}
     >
       <TitleRow>
         <Title>
           {title}
         </Title>
-        <DateP>
-          {moment(date).format('YYYY.MM.DD')}
-        </DateP>
+        {!white ? (
+          <Icon icon="delete" onClick={onDelete} height={24} />
+        ) : null}
+
       </TitleRow>
       <TypeRow>
         <KeyP>시급</KeyP>
-        <ValP>{hourly}</ValP>
+        <ValP>{formatCurrency(hourly)}</ValP>
+        <ValP>> {type}</ValP>
       </TypeRow>
       <TypeRow>
         <KeyP>세전</KeyP>
-        <ValP>{beforeTax}</ValP>
+        <ValP>
+          {formatCurrency(beforeTax)}
+        </ValP>
         <KeyP style={{ marginLeft: 32 }}>세후</KeyP>
-        <ValP>{beforeTax}</ValP>
+        <ValP>
+          {formatCurrency(afterTax)}
+        </ValP>
       </TypeRow>
-    </Card>
+    </StyledCard>
   );
 };
 

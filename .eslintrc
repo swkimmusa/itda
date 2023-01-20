@@ -20,6 +20,7 @@
     "comma-dangle": [1, "always-multiline"],
     "destructuring-newline/object-property-newline": 2,
     "indent": [1, 2],
+    "max-len": 0,
     "no-continue": 0,
     "no-unused-vars": 1,
     // "no-noninteractive-element-interactions": 0,

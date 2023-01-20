@@ -1,17 +1,26 @@
-import { useParams } from 'react-router-dom';
+import {
+  useParams, useNavigate,
+} from 'react-router-dom';
 import styled from 'styled-components';
+
 import { connect } from 'react-redux';
 import {
   size, palette, font,
 } from 'styled-theme';
 import { ifProp } from 'styled-tools';
-
+import { format } from 'number-currency-format';
 import get from 'lodash/get';
+import {
+  formatNumber, formatCurrency,
+} from '../../services/formatCurrency';
 import Flex from '../../components/atoms/Flex';
 import Heading from '../../components/atoms/Heading';
 import Button from '../../components/atoms/Button';
+import Text from '../../components/atoms/P';
 import Label from '../../components/atoms/Label';
+import Link from '../../components/atoms/Link';
 import Input from '../../components/molecules/Input';
+import IconText from '../../components/molecules/IconText';
 import PageAction from '../../components/organisms/PageAction';
 import InfoCard from '../../components/molecules/InfoCard';
 import { hourlyCalc } from '../../services/calculator';
@@ -27,60 +36,71 @@ const SectionWrapper = styled(Flex)`
   margin-bottom: 40px;
 `;
 
+const HeaderContainer = styled(Flex)`
+  flex-direction: row;
+  margin-top: 40px;
+  flex-wrap: wrap;
+  font-size: 26px;
+  line-height: 32px;
+  color: ${palette('black', 0)};
+`;
+
 const Section = styled(Flex)`
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
 `;
 
-const StyledText = styled.div`
-  padding: 10px 15px 22px 0px;
-  width: 200px;
-  text-align: right;
-  font-family: ${font('tertiary')};
-  font-weight: bold;
-
-  @media (max-width: ${size('mobileBreakpoint')}){
-    text-align: left;
-    padding: 0px;
-    width: auto;
-  }
-`;
-
-const StyledButton = styled(Button)`
-  width: 50%;
-  min-width: 180px;
-  margin: 20px 0px 20px;
-  border-radius: 0px;
-
-  @media (max-width: ${size('mobileBreakpoint')}){
-    width: 100%;
-  }
-`;
-
-const DashedButton = styled(Button)`
-  border: 1px dashed ${palette('grayscale', 3)};
-  background-color: ${ifProp('disabled', '#CCCCCC', palette('white', 0))};
-  color: ${palette('black', 0)};
-  border-radius: 4px;
-  margin-top: 5px;
-  width: 100%;
-  padding: 0px;
-
-  &:hover,
-  &:focus,
-  &:active {
-    background-color: ${palette('white', 0)};
-    color: ${palette('black', 0)};
-  }
+const CardHeaderContainer = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const StyledInfoCard = styled(InfoCard)`
   margin-top: 10px;
 `;
 
+const HeaderValue = styled.span`
+  font-weight: 700;
+  color: ${palette('black', 0)};
+  position: relative;
+  white-space: nowrap;
+  ::after {
+
+    content: '';
+    position: absolute;
+    bottom: 0%;
+    left: 0;
+    height: 8px;
+    width: 100%;
+    background: ${palette('primary', 1)};
+    z-index: -1;
+  }
+`;
+
+const StyledIconText = styled(IconText)`
+  position: relative;
+  white-space: nowrap;
+  ::after {
+
+    content: '';
+    position: absolute;
+    bottom: 0%;
+    left: 0;
+    height: 8px;
+    width: 100%;
+    background: ${palette('grayscale', 1)};
+    z-index: -1;
+  }
+`;
+
+const conversionLabels = {
+  weekly: '주급',
+  monthly: '월급',
+};
 const ResultView = (props) => {
   const { calculationList } = props;
+  const navigate = useNavigate();
   const { id } = useParams();
   const currentInputValues = calculationList[id];
   const currentCalculation = hourlyCalc(currentInputValues);
@@ -90,65 +110,106 @@ const ResultView = (props) => {
   return (
     <Wrapper>
       <SectionWrapper>
+
+        <HeaderContainer>
+          <StyledIconText
+            onClick={() => navigate(`/hourly/calc/${id}`, { replace: false })}
+            style={{
+              display: 'inline',
+              fontSize: 26,
+            }}
+          >
+            {currentInputValues.name}
+          </StyledIconText>
+          <span>의 예상 실수령액은</span>
+          &nbsp;
+          <HeaderValue>
+            {formatCurrency(result.netPay)}
+          </HeaderValue>
+          &nbsp;
+          <span>
+            입니다
+          </span>
+        </HeaderContainer>
+      </SectionWrapper>
+      <SectionWrapper>
         <Heading level={3} palette="black">상세 정보</Heading>
         <StyledInfoCard
           info={[
             {
-              label: '급여총액',
-              value: result.basePay,
+              label: '기본급',
+              value: formatCurrency(result.basePay),
             },
             {
               label: '주휴수당',
-              value: result.overtimePay,
+              value: formatCurrency(result.overtimePay),
             },
+            // {
+            //   label: '월 급여',
+            //   value: result.totalPay,
+            // },
+            // {
+            //   label: '4대보험',
+            //   value: result.healthInsurance,
+            // },
+            // {
+            //   label: '공제액 합계',
+            //   value: result.healthInsurance,
+            //   valueStyle: { fontWeight: 'bold' },
+            // },
             {
-              label: '입력정보 합계',
-              value: result.totalPay,
-            },
-            {
-              label: '4대보험',
-              value: result.healthInsurance,
-            },
-            {
-              label: '공제액 합계',
-              value: result.healthInsurance,
-              valueStyle: { fontWeight: 'bold' },
-            },
-            {
-              label: '월 예상 실수령액',
-              value: result.netPay,
+              label: '월 급여',
+              value: formatCurrency(result.netPay),
               valueStyle: { fontWeight: 'bold' },
             },
           ]}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">근무정보</Heading>
+        <CardHeaderContainer>
+          <Heading level={3} palette="black">근무정보</Heading>
+          {/* <Link to={`/hourly/calc/${id}?step=${0}`}>수정</Link> */}
+
+        </CardHeaderContainer>
         <StyledInfoCard
           info={[
-            { label: '근무시간' },
-            { label: '근무인원' },
-          ]}
+            // {
+            //   label: '근무시간',
+            //   value: result.conversionType,
+            // },
+            {
+              label: '상시 근무인원',
+              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
+            }]}
         />
       </SectionWrapper>
       <SectionWrapper>
         <Heading level={3} palette="black">급여 정보</Heading>
         <StyledInfoCard
           info={[
-            { label: '환산기준' },
-            { label: '급여' },
+            {
+              label: '환산기준',
+              value: conversionLabels[result.conversionType],
+            },
+            {
+              label: '급여',
+              value: `${result.type} ${formatCurrency(result.hourlyWage)}`,
+            },
           ]}
         />
       </SectionWrapper>
       <SectionWrapper>
         <Heading level={3} palette="black">근무시간 정보</Heading>
         <StyledInfoCard
-          info={[{ label: '총 근무시간' }]}
+          info={[{
+            label: '총 근무시간',
+            value: result.hoursWorked,
+          }]}
         />
       </SectionWrapper>
       <PageAction actions={[]}>
         <Button label="계산 내역으로" to="/history" />
-        <Button palette="grayscale" label="계산 결과 삭제" style={{ marginTop: 15 }} />
+        <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} />
       </PageAction>
     </Wrapper>
   );

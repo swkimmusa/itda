@@ -12,9 +12,11 @@ import Spinner from '../Spinner';
 
 const backgroundColor = ({
   disabled,
+  transparent,
   primary,
 }) => {
   if (disabled) return palette('grayscale', 0);
+  if (transparent) return 'transparent';
   return palette('primary', 0);
 };
 
@@ -23,7 +25,7 @@ const foregroundColor = ({
   disabled,
 }) => {
   if (transparent) {
-    return disabled ? palette('grayscale', 3) : palette(3);
+    return disabled ? palette('grayscale', 3) : palette('grasyscale', 0);
   }
   return palette('white', 0);
 };
@@ -44,7 +46,7 @@ const styles = css`
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
-  border: 2px solid ${ifProp('transparent', 'currentcolor', 'transparent')};
+  border: 2px solid ${ifProp('transparent', 'transparent', 'transparent')};
   ${ifProp('borderColor', css`
     border-color: ${({ borderColor }) => borderColor};
   `)}

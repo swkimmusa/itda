@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
+import moment from 'moment';
+import 'moment/locale/ko';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import dayjs from 'dayjs';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
@@ -15,18 +18,19 @@ import { apiUrl } from './config';
 import apiService from './services/api';
 
 import theme from './theme';
-import store, {
-  persistor, sdf,
-} from './store';
+import store, { persistor } from './store';
 
 global.api = apiService.create({ defaultUrl: apiUrl });
+moment.locale('ko');
+dayjs.locale('ko');
 
+console.log('basename is : ', process.env.REACT_APP_BASE_URL);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading="loading" persistor={persistor}>
-        <Router basename="/">
+        <Router basename={process.env.REACT_APP_BASE_URL || ''}>
           <ThemeProvider theme={theme}>
             <GlobalStyled />
             <App />

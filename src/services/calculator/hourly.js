@@ -1,6 +1,13 @@
 import { stringify } from 'qs';
-import { clone } from 'lodash';
+import {
+  clone, get,
+} from 'lodash';
+import moment from 'moment';
+import {
+  format, unformat,
+} from 'number-currency-format';
 
+const roundCurrency = (v) => unformat(format(v, { decimalsDigits: 0 }));
 const defaultInputValues = {
   smallBusiness: false,
   over15Weekly: false,
@@ -14,6 +21,11 @@ const defaultInputValues = {
   contractWeeklyHours: null,
 
   overtimeHoursWorked: null,
+
+  weeklyHours: {
+    baseDate: null,
+    list: [],
+  },
 };
 
 const calculatedValues = { hoursWorked: 0 };
@@ -29,9 +41,19 @@ const getHoursWorked = (inputValues) => {
   const {
     hoursWorked,
     hoursPerDay,
+    conversionType,
     daysPerWeek,
     daysWorked,
+    weeklyHours,
   } = inputValues;
+
+  if (conversionType === 'weekly') {
+    const minutesList = weeklyHours.list.map((range) => {
+      const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
+      return difference;
+    });
+    return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
+  }
 
   if (hoursWorked) return hoursWorked;
 
@@ -44,12 +66,10 @@ const getBasePay = (inputValues) => {
     hoursWorked,
     hoursPerDay,
   } = inputValues;
-  console.log('hourlyWage: ', hourlyWage);
-  console.log('hoursWorked: ', hoursWorked);
-  console.log('hoursPerDay: ', hoursPerDay);
+
   if (hoursWorked) return hourlyWage * hoursWorked;
-  console.log('hoursPerDay: ', hoursPerDay);
-  return hourlyWage * hoursPerDay;
+
+  return roundCurrency(hourlyWage * hoursPerDay);
 };
 
 const getOvertimeHours = (inputValues) => {
@@ -66,7 +86,7 @@ const getOvertimeHours = (inputValues) => {
     !!daysWorked
     && !!hoursPerDay
     && !!contractWeeklyHours
-  ) return (daysWorked * hoursPerDay) - contractWeeklyHours;
+  ) return Math.max((daysWorked * hoursPerDay) - contractWeeklyHours, 0);
 
   return null;
 };
@@ -76,7 +96,7 @@ const getOvertimePay = (inputValues) => {
     overtimeHoursWorked,
     hourlyWage,
   } = inputValues;
-  return 1.5 * overtimeHoursWorked * hourlyWage;
+  return roundCurrency(1.5 * overtimeHoursWorked * hourlyWage);
 };
 
 const calculate = (inputValues) => {
@@ -103,17 +123,17 @@ const calculate = (inputValues) => {
 
   mergedInputValues = {
     ...mergedInputValues,
-    totalPay: mergedInputValues.overtimePay + mergedInputValues.basePay,
+    totalPay: roundCurrency(mergedInputValues.overtimePay + mergedInputValues.basePay),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    healthInsurance: mergedInputValues.totalPay * 0.009,
+    healthInsurance: roundCurrency(mergedInputValues.totalPay * 0.009),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    netPay: mergedInputValues.totalPay - mergedInputValues.healthInsurance,
+    netPay: roundCurrency(mergedInputValues.totalPay - mergedInputValues.healthInsurance),
   };
 
   return {

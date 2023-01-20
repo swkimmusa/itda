@@ -1,22 +1,28 @@
 {
   "name": "pacto-app",
   "version": "0.1.0",
+  "homepage": "https://swkimmusa.github.io/itda",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "1.8.2",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "13.3.0",
     "@testing-library/user-event": "13.5.0",
+    "antd": "5.1.6",
     "classnames": "2.3.1",
+    "currency.js": "2.0.4",
+    "dayjs": "1.11.7",
     "formik": "2.2.9",
     "isomorphic-fetch": "3.0.0",
     "lodash": "4.17.21",
     "moment": "2.29.4",
+    "number-currency-format": "1.0.10",
     "prop-types": "15.8.1",
     "qs": "6.11.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-redux": "8.0.2",
+    "react-refresh": "0.11.0",
     "react-router-dom": "6.3.0",
     "react-router-prop-types": "1.0.5",
     "react-scripts": "5.0.1",
@@ -26,8 +32,10 @@
     "styled-components": "5.3.5",
     "styled-theme": "0.3.3",
     "styled-tools": "1.7.2",
+    "uuid": "9.0.0",
     "web-vitals": "2.1.4",
     "web3": "1.7.3",
+    "webpack": "5.74.0",
     "workbox-background-sync": "6.5.4",
     "workbox-broadcast-update": "6.5.4",
     "workbox-cacheable-response": "6.5.4",
@@ -44,10 +52,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:page": "NODE_ENV=development react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook:clear-cache": "start-storybook --no-manager-cache",
+    "build-storybook": "build-storybook -s public",
+    "predeploy": "npm run build:page",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": {
     "production": [
@@ -76,9 +88,9 @@
     "eslint": "8.18.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-destructuring-newline": "0.0.2",
+    "gh-pages": "4.0.0",
     "sass": "1.53.0",
-    "storybook-addon-styled-component-theme": "2.0.0",
-    "webpack": "5.74.0"
+    "storybook-addon-styled-component-theme": "2.0.0"
   },
   "eslintConfig": {
     "overrides": [
