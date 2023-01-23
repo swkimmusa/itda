@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/itda/static/css/main.0a828854.css",
-    "main.js": "/itda/static/js/main.8692c05e.js",
+    "main.js": "/itda/static/js/main.4e50ff3c.js",
     "static/js/787.43d5e83a.chunk.js": "/itda/static/js/787.43d5e83a.chunk.js",
     "static/media/hourly.svg": "/itda/static/media/hourly.5d8e83ff7d7beea07069529f053ab3cd.svg",
     "static/media/calc.svg": "/itda/static/media/calc.c83f46e6170b4d740e1ffc1cad76f969.svg",
@@ -14,16 +14,16 @@
     "static/media/calendar.png": "/itda/static/media/calendar.cd325fe9b889d206c5f8.png",
     "static/media/yearly.png": "/itda/static/media/yearly.76cf5ecd72838374ce5f.png",
     "static/media/loader.svg": "/itda/static/media/loader.ef114f6846ebe85416ed94219d390c58.svg",
+    "static/media/x.svg": "/itda/static/media/x.15ac4960a7f6bdbd3319fd5d6f46e3ad.svg",
     "index.html": "/itda/index.html",
     "static/media/logo.svg": "/itda/static/media/logo.f9568f61eb0d27b033f63d1721c69a9c.svg",
     "static/media/caret.svg": "/itda/static/media/caret.16a17203d4ad8d1feded79acbbd7931b.svg",
-    "static/media/x.svg": "/itda/static/media/x.16a17203d4ad8d1feded79acbbd7931b.svg",
     "main.0a828854.css.map": "/itda/static/css/main.0a828854.css.map",
-    "main.8692c05e.js.map": "/itda/static/js/main.8692c05e.js.map",
+    "main.4e50ff3c.js.map": "/itda/static/js/main.4e50ff3c.js.map",
     "787.43d5e83a.chunk.js.map": "/itda/static/js/787.43d5e83a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0a828854.css",
-    "static/js/main.8692c05e.js"
+    "static/js/main.4e50ff3c.js"
   ]
 }

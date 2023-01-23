@@ -1,0 +1,14 @@
+<svg id="icon_outlined_suggested_close" data-name="icon/outlined/suggested/close" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14" viewBox="0 0 14 14">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="icon_outlined_suggested_close_clip_mask_" data-name="icon/outlined/suggested/close (clip mask)" width="14" height="14" fill="none"/>
+    </clipPath>
+  </defs>
+  <rect id="icon_outlined_suggested_close_clip_mask_2" data-name="icon/outlined/suggested/close (clip mask)" width="14" height="14" fill="none"/>
+  <g id="icon_outlined_suggested_close-2" data-name="icon/outlined/suggested/close" clip-path="url(#clip-path)">
+    <g id="icon_outlined_suggested_close_clip_group_" data-name="icon/outlined/suggested/close (clip group)">
+      <rect id="icon_outlined_suggested_close_style_" data-name="icon/outlined/suggested/close (style)" width="14" height="14" fill="none"/>
+      <path id="Vector" d="M5.042,4.457,8.631.179A.109.109,0,0,0,8.548,0H7.457a.223.223,0,0,0-.168.078L4.329,3.607,1.369.078A.218.218,0,0,0,1.2,0H.109A.109.109,0,0,0,.026.179L3.615,4.457.026,8.735a.109.109,0,0,0,.083.179H1.2a.223.223,0,0,0,.168-.078l2.96-3.529,2.96,3.529a.219.219,0,0,0,.168.078H8.548a.109.109,0,0,0,.083-.179Z" transform="translate(2.666 2.543)" fill="#d895ff"/>
+    </g>
+  </g>
+</svg>
