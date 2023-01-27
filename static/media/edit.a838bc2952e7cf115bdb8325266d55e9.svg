@@ -1,0 +1,14 @@
+<svg id="icon_filled_editor_edit" data-name="icon/filled/editor/edit" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="21" height="21" viewBox="0 0 21 21">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="icon_filled_editor_edit_clip_mask_" data-name="icon/filled/editor/edit (clip mask)" width="21" height="21" fill="none"/>
+    </clipPath>
+  </defs>
+  <rect id="icon_filled_editor_edit_clip_mask_2" data-name="icon/filled/editor/edit (clip mask)" width="21" height="21" fill="none"/>
+  <g id="icon_filled_editor_edit-2" data-name="icon/filled/editor/edit" clip-path="url(#clip-path)">
+    <g id="icon_filled_editor_edit_clip_group_" data-name="icon/filled/editor/edit (clip group)">
+      <rect id="icon_filled_editor_edit_style_" data-name="icon/filled/editor/edit (style)" width="21" height="21" fill="none"/>
+      <path id="Vector" d="M.692,13.125a.834.834,0,0,0,.123-.01l3.449-.6a.2.2,0,0,0,.109-.057l8.693-8.693a.2.2,0,0,0,0-.289L9.658.059a.208.208,0,0,0-.291,0L.673,8.753a.209.209,0,0,0-.057.109l-.6,3.449a.687.687,0,0,0,.193.611.7.7,0,0,0,.488.2Z" transform="translate(3.938 3.938)" fill="#797979"/>
+    </g>
+  </g>
+</svg>
