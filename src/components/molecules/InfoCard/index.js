@@ -24,6 +24,7 @@ const Value = styled(Text)`
 const KeyValue = ({
   label,
   value,
+  labelStyle,
   valueStyle,
 }) => {
   return (
@@ -33,7 +34,7 @@ const KeyValue = ({
       padding: 10,
     }}
     >
-      <Key>{label}</Key>
+      <Key style={labelStyle}>{label}</Key>
       <Value style={valueStyle}>{value}</Value>
     </Flex>
   );

@@ -1,4 +1,6 @@
-import { format } from 'number-currency-format';
+import {
+  format, unformat,
+} from 'number-currency-format';
 
 export const formatNumber = (v, opts = {}) => {
   return format(v, {
@@ -18,3 +20,5 @@ export const formatCurrency = (v, opts = {}) => {
     ...opts,
   });
 };
+
+export const roundCurrency = (v) => unformat(format(v, { decimalsDigits: 0 }));

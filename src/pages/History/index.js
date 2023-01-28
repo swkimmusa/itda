@@ -120,7 +120,7 @@ const History = ({
               label: '시급',
             },
             {
-              value: 'yearly',
+              value: 'annual',
               label: '연봉',
             },
             {
@@ -149,13 +149,13 @@ const History = ({
               const { result } = currentCalculation;
               console.log(result);
               return (
-                <Link to={`/hourly/result/${k}`} key={k}>
+                <Link to={`/${result.type || 'hourly'}/result/${k}`} key={k}>
                   <StyledCalcSummHeader
                     title={result.name}
                     hourly={result.hourlyWage}
                     type={result.conversionType}
-                    beforeTax={result.totalPay}
-                    afterTax={result.netPay}
+                    beforeTax={result.totalWage}
+                    afterTax={result.netWage}
                     onDelete={(e) => {
                       console.log('stopping prop');
                       e.preventDefault();

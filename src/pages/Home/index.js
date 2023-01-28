@@ -126,7 +126,7 @@ const Home = ({
       <SectionContainer>
         <IconCardsContainer>
           <StyledIconCard src={hourly} label="시급계산기" onClick={() => navigate('/hourly/calc/new')} />
-          <StyledIconCard src={yearly} label="연봉계산기" />
+          <StyledIconCard src={yearly} label="연봉계산기" onClick={() => navigate('/annual/calc/new')} />
           <StyledIconCard src={calendar} label="연차계산기" />
           <StyledIconCard src={calc} label="퇴직급계산기" />
         </IconCardsContainer>
@@ -147,8 +147,8 @@ const Home = ({
                 title={result.name}
                 hourly={result.hourlyWage}
                 type={result.conversionType}
-                beforeTax={result.totalPay}
-                afterTax={result.netPay}
+                beforeTax={result.totalWage}
+                afterTax={result.netWage}
                 // beforeTax: 321000,
                 // afterTax: 321000,
                 // date: moment().toISOString(),

@@ -11,11 +11,15 @@ import styled from 'styled-components';
 import NotFound from '../pages/NotFound';
 import Home from '../pages/Home';
 import History from '../pages/History';
-import HourlyFormView from '../pages/Hourly/FormView';
-import HourlyResultView from '../pages/Hourly/ResultView';
 import LeftMenu from '../containers/LeftMenu';
 import Header from '../containers/Header';
 import Flex from '../components/atoms/Flex';
+
+import HourlyFormView from '../pages/Hourly/FormView';
+import HourlyResultView from '../pages/Hourly/ResultView';
+
+import AnnualFormView from '../pages/Annual/FormView';
+import AnnualResultView from '../pages/Annual/ResultView';
 
 const routes = [
   {
@@ -29,9 +33,19 @@ const routes = [
     element: <HourlyFormView />,
   },
   {
-    label: 'HourlyForm',
+    label: 'HourlyResult',
     href: '/hourly/result/:id',
     element: <HourlyResultView />,
+  },
+  {
+    label: 'AnnualForm',
+    href: '/annual/calc/:id',
+    element: <AnnualFormView />,
+  },
+  {
+    label: 'AnnualResult',
+    href: '/annual/result/:id',
+    element: <AnnualResultView />,
   },
 ];
 

@@ -6,8 +6,8 @@ import moment from 'moment';
 import {
   format, unformat,
 } from 'number-currency-format';
+import { roundCurrency } from '../formatCurrency';
 
-const roundCurrency = (v) => unformat(format(v, { decimalsDigits: 0 }));
 const defaultInputValues = {
   smallBusiness: false,
   over15Weekly: false,
@@ -20,7 +20,7 @@ const defaultInputValues = {
 
   contractWeeklyHours: null,
 
-  overtimeHoursWorked: null,
+  overtimeWorkHours: null,
 
   weeklyHours: {
     baseDate: null,
@@ -60,7 +60,7 @@ const getHoursWorked = (inputValues) => {
   return hoursPerDay * daysWorked;
 };
 
-const getBasePay = (inputValues) => {
+const getBaseWage = (inputValues) => {
   const {
     hourlyWage,
     hoursWorked,
@@ -75,12 +75,12 @@ const getBasePay = (inputValues) => {
 const getOvertimeHours = (inputValues) => {
   const {
     daysWorked,
-    overtimeHoursWorked,
+    overtimeWorkHours,
     contractWeeklyHours,
     daysPerWeek,
     hoursPerDay,
   } = inputValues;
-  if (overtimeHoursWorked) return overtimeHoursWorked;
+  if (overtimeWorkHours) return overtimeWorkHours;
 
   if (
     !!daysWorked
@@ -91,12 +91,12 @@ const getOvertimeHours = (inputValues) => {
   return null;
 };
 
-const getOvertimePay = (inputValues) => {
+const getOvertimeWage = (inputValues) => {
   const {
-    overtimeHoursWorked,
+    overtimeWorkHours,
     hourlyWage,
   } = inputValues;
-  return roundCurrency(1.5 * overtimeHoursWorked * hourlyWage);
+  return roundCurrency(1.5 * overtimeWorkHours * hourlyWage);
 };
 
 const calculate = (inputValues) => {
@@ -108,32 +108,32 @@ const calculate = (inputValues) => {
   };
   mergedInputValues = {
     ...mergedInputValues,
-    basePay: getBasePay(mergedInputValues),
+    baseWage: getBaseWage(mergedInputValues),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    overtimeHoursWorked: getOvertimeHours(mergedInputValues),
+    overtimeWorkHours: getOvertimeHours(mergedInputValues),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    overtimePay: getOvertimePay(mergedInputValues),
+    overtimeWage: getOvertimeWage(mergedInputValues),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    totalPay: roundCurrency(mergedInputValues.overtimePay + mergedInputValues.basePay),
+    totalWage: roundCurrency(mergedInputValues.overtimeWage + mergedInputValues.baseWage),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    healthInsurance: roundCurrency(mergedInputValues.totalPay * 0.009),
+    healthInsurance: roundCurrency(mergedInputValues.totalWage * 0.009),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    netPay: roundCurrency(mergedInputValues.totalPay - mergedInputValues.healthInsurance),
+    netWage: roundCurrency(mergedInputValues.totalWage - mergedInputValues.healthInsurance),
   };
 
   return {

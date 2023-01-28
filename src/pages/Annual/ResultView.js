@@ -23,7 +23,7 @@ import Input from '../../components/molecules/Input';
 import IconText from '../../components/molecules/IconText';
 import PageAction from '../../components/organisms/PageAction';
 import InfoCard from '../../components/molecules/InfoCard';
-import { hourlyCalc } from '../../services/calculator';
+import { annualCalc } from '../../services/calculator';
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
@@ -103,7 +103,7 @@ const ResultView = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const currentInputValues = calculationList[id];
-  const currentCalculation = hourlyCalc(currentInputValues);
+  const currentCalculation = annualCalc(currentInputValues);
   const { result } = currentCalculation;
   const isEdit = !!id;
   console.log(result);
@@ -113,7 +113,7 @@ const ResultView = (props) => {
 
         <HeaderContainer>
           <StyledIconText
-            onClick={() => navigate(`/hourly/calc/${id}`, { replace: false })}
+            onClick={() => navigate(`/annual/calc/${id}`, { replace: false })}
             style={{
               display: 'inline',
               fontSize: 26,
@@ -133,56 +133,62 @@ const ResultView = (props) => {
         </HeaderContainer>
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">상세 정보</Heading>
+        <CardHeaderContainer>
+          <Heading level={3} palette="black">정보</Heading>
+        </CardHeaderContainer>
         <StyledInfoCard
           info={[
             {
-              label: '기본급',
-              value: formatCurrency(result.baseWage),
-            },
-            {
-              label: '주휴수당',
-              value: formatCurrency(result.overtimeWage),
-            },
-            // {
-            //   label: '월 급여',
-            //   value: result.totalWage,
-            // },
-            // {
-            //   label: '4대보험',
-            //   value: result.healthInsurance,
-            // },
-            // {
-            //   label: '공제액 합계',
-            //   value: result.healthInsurance,
-            //   valueStyle: { fontWeight: 'bold' },
-            // },
-            {
-              label: '월 급여',
-              value: formatCurrency(result.netWage),
+              label: '연봉',
+              value: formatCurrency(result.annualSalary),
               valueStyle: { fontWeight: 'bold' },
+            },
+            {
+              label: '부양 가족 수',
+              value: `${result.numOfFamily}명`,
+            },
+            {
+              label: '20세 이하 자녀 수',
+              value: `${result.numOfFamilyUnderAge}명`,
             },
           ]}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <CardHeaderContainer>
-          <Heading level={3} palette="black">근무정보</Heading>
-          {/* <Link to={`/hourly/calc/${id}?step=${0}`}>수정</Link> */}
-
-        </CardHeaderContainer>
+        <Heading level={3} palette="black">추가 수당</Heading>
         <StyledInfoCard
           info={[
-            // {
-            //   label: '근무시간',
-            //   value: result.conversionType,
-            // },
             {
-              label: '상시 근무인원',
-              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
-            }]}
+              label: `연장근로 - ${result.overtimeWorkHours}시간`,
+              value: formatCurrency(result.overtimeWorkWage),
+            },
+            {
+              label: `야간근로 - ${result.nightTimeWorkHours}시간`,
+              value: formatCurrency(result.nightTimeWorkWage),
+            },
+            {
+              label: `휴일근로 - ${result.holidayWorkHours}시간`,
+              value: formatCurrency(result.holidayWorkWage),
+            },
+            {
+              label: `휴일연장근로 - ${result.holidayOvertimeWorkHours}시간`,
+              value: formatCurrency(result.holidayOvertimeWorkWage),
+            },
+            {
+              label: '총 추가 수당',
+              value: formatCurrency(
+                result.overtimeWorkWage
+                + result.nightTimeWorkWage
+                + result.holidayWorkWage
+                + result.holidayOvertimeWorkWage,
+              ),
+              labelStyle: { fontWeight: 'bold' },
+              valueStyle: { fontWeight: 'bold' },
+            },
+          ]}
         />
       </SectionWrapper>
+
       <SectionWrapper>
         <Heading level={3} palette="black">급여 정보</Heading>
         <StyledInfoCard
@@ -193,7 +199,7 @@ const ResultView = (props) => {
             },
             {
               label: '급여',
-              value: `${result.type} ${formatCurrency(result.hourlyWage)}`,
+              value: `${result.type} ${formatCurrency(result.annualSalary)}`,
             },
           ]}
         />
