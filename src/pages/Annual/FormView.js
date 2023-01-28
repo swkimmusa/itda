@@ -60,6 +60,7 @@ const FieldSection = styled(Flex)`
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
+  display: ${ifProp('hidden', 'none')};
 `;
 
 const StyledText = styled.div`
@@ -154,6 +155,7 @@ const ProgressText = styled(Text)`
 
 const getDefaultInitialValues = () => ({
   type: 'annual',
+  conversionType: 'annual',
   name: '',
 });
 const FormView = (props) => {
@@ -229,9 +231,30 @@ const FormView = (props) => {
             <FieldSection>
               <FieldComponent
                 required
-                name="annualSalary"
+                name="conversionType"
+                type="buttonSelect"
+                label="현재 급여를 입력해 주세요."
+                // buttonStyle={{
+                //   paddingTop: 18,
+                //   paddingBottom: 18,
+                //   flex: 1,
+                // }}
+                options={[
+                  {
+                    label: '연봉',
+                    value: 'annual',
+                  },
+                  {
+                    label: '월급',
+                    value: 'monthly',
+                  },
+                ]}
+              />
+            </FieldSection>
+            <FieldSection>
+              <FieldComponent
+                name="salary"
                 type="number"
-                label="현재 연봉을 입력해 주세요."
               />
             </FieldSection>
           </Step>

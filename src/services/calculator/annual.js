@@ -8,9 +8,17 @@ import {
 } from 'number-currency-format';
 import { roundCurrency } from '../formatCurrency';
 
+export const nationalPensionRate = 0.09;
+export const healthInsuranceRate = 0.0709;
+export const longTermHealthInsuranceRate = 0.1281;
+export const employmentInsuranceRate = 0.018;
+
+export const maxNationalPensionRate = 248500;
+
 const defaultInputValues = {
-  annualSalary: 0,
-  monthlySalary: 0,
+  conversionType: 'annual',
+
+  salary: 0,
   averageMonthlySalary: 0,
 
   // ordinaryMonthlySalary: 0,
@@ -29,6 +37,11 @@ const defaultInputValues = {
   // nightTimeWorkWage: 0,
   // holidayWorkWage: 0,
   // holidayOvertimeWorkWage: 0,
+
+  nationalPension: 0,
+  healthInsurance: 0,
+  healthInsuranceRate: 0,
+  employmentInsurance: 0,
 };
 
 const mergeInputValues = (inputValues) => {
@@ -40,31 +53,48 @@ const mergeInputValues = (inputValues) => {
 
 const getAverageMonthlySalary = (inputValues) => {
   const {
-    annualSalary,
-    monthlySalary,
-    nonTaxableIncome,
-    numOfFamily,
-    numOfFamilyUnderAge,
+    conversionType,
+    salary,
   } = inputValues;
 
-  if (annualSalary && annualSalary > 0) return roundCurrency(annualSalary / 12);
-  if (monthlySalary && monthlySalary > 0) return roundCurrency(monthlySalary);
+  if (conversionType === 'annual') {
+    if (salary && salary > 0) return roundCurrency(salary / 12);
+    return 0;
+  }
+
+  if (conversionType === 'monthly') {
+    if (salary && salary > 0) return roundCurrency(salary);
+    return 0;
+  }
+
+  return 0;
+};
+
+const getPensionMonthlySalary = (inputValues) => {
+  const {
+    conversionType,
+    averageMonthlySalary,
+  } = inputValues;
+
+  if (conversionType === 'annual') return averageMonthlySalary;
+  if (conversionType === 'monthly') return averageMonthlySalary;
 
   return 0;
 };
 
 const getOrdinaryMonthlySalary = (inputValues) => {
   const { averageMonthlySalary } = inputValues;
-  return averageMonthlySalary || 0;
+  return averageMonthlySalary || 0; // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
 };
 
 const getOrdinaryHourlySalary = (inputValues) => {
   const { averageMonthlySalary } = inputValues;
-  return roundCurrency(averageMonthlySalary / 209);
+  return averageMonthlySalary / 209; // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
 };
 
 const getAddedWageGroup = (inputValues) => {
   const {
+    conversionType,
     ordinaryHourlySalary,
 
     overtimeWorkHours,
@@ -74,14 +104,80 @@ const getAddedWageGroup = (inputValues) => {
 
   } = inputValues;
 
+  if (conversionType === 'annual') {
+    return {
+      overtimeWorkWage: 0,
+      nightTimeWorkWage: 0,
+      holidayWorkWage: 0,
+      holidayOvertimeWorkWage: 0,
+
+      totalAddedWage: 0,
+    };
+  }
+
+  const overtimeWorkWage = roundCurrency(overtimeWorkHours * ordinaryHourlySalary * 1.5);
+  const nightTimeWorkWage = roundCurrency(nightTimeWorkHours * ordinaryHourlySalary * 0.5);
+  const holidayWorkWage = roundCurrency(holidayWorkHours * ordinaryHourlySalary * 1.5);
+  const holidayOvertimeWorkWage = roundCurrency(holidayOvertimeWorkHours * ordinaryHourlySalary * 2);
+
   const addedWage = {
-    overtimeWorkWage: roundCurrency(overtimeWorkHours * ordinaryHourlySalary * 1.5),
-    nightTimeWorkWage: roundCurrency(nightTimeWorkHours * ordinaryHourlySalary * 0.5),
-    holidayWorkWage: roundCurrency(holidayWorkHours * ordinaryHourlySalary * 1.5),
-    holidayOvertimeWorkWage: roundCurrency(holidayOvertimeWorkHours * ordinaryHourlySalary * 2),
+    overtimeWorkWage,
+    nightTimeWorkWage,
+    holidayWorkWage,
+    holidayOvertimeWorkWage,
+
+    totalAddedWage: overtimeWorkWage + nightTimeWorkWage + holidayWorkWage + holidayOvertimeWorkWage,
   };
 
   return addedWage;
+};
+
+const getMonthlyTotalSalary = (inputValues) => {
+  const {
+    totalAddedWage,
+    averageMonthlySalary,
+  } = inputValues;
+  return roundCurrency(averageMonthlySalary + totalAddedWage);
+};
+
+const getInsuranceGroup = (inputValues) => {
+  const {
+    pensionMonthlySalary,
+    monthlyTotalSalary,
+    nonTaxableIncome,
+    // nationalPension,
+    // healthInsurance,
+    // healthInsuranceRate,
+    // employmentInsurance,
+  } = inputValues;
+
+  const nationalPension = roundCurrency(
+    Math.max((
+      (pensionMonthlySalary - nonTaxableIncome)
+        * nationalPensionRate
+        * 0.5,
+      maxNationalPensionRate
+    )),
+  ); // TODO round down
+  const healthInsurance = roundCurrency((monthlyTotalSalary - nonTaxableIncome) * healthInsuranceRate * 0.5); // TODO round down
+  const longTermHealthInsurance = roundCurrency(healthInsurance * longTermHealthInsuranceRate); // TODO round down
+  const employmentInsurance = roundCurrency((monthlyTotalSalary - nonTaxableIncome) * employmentInsuranceRate * 0.5); // TODO round down
+
+  return {
+    nationalPension,
+    healthInsurance,
+    longTermHealthInsurance,
+    employmentInsurance,
+    totalInsurance: nationalPension + healthInsurance + longTermHealthInsurance + employmentInsurance,
+  };
+};
+
+const getMonthlyNetSalary = (inputValues) => {
+  const {
+    monthlyTotalSalary,
+    totalInsurance,
+  } = inputValues;
+  return roundCurrency(monthlyTotalSalary - totalInsurance);
 };
 
 const calculate = (inputValues) => {
@@ -90,6 +186,11 @@ const calculate = (inputValues) => {
   mergedInputValues = {
     ...mergedInputValues,
     averageMonthlySalary: getAverageMonthlySalary(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    pensionMonthlySalary: getPensionMonthlySalary(mergedInputValues),
   };
 
   mergedInputValues = {
@@ -105,6 +206,21 @@ const calculate = (inputValues) => {
   mergedInputValues = {
     ...mergedInputValues,
     ...getAddedWageGroup(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    monthlyTotalSalary: getMonthlyTotalSalary(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    ...getInsuranceGroup(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    monthlyNetSalary: getMonthlyNetSalary(mergedInputValues),
   };
 
   return {

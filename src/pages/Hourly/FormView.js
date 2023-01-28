@@ -217,8 +217,6 @@ const FormView = (props) => {
           alert(JSON.stringify(calc, null, 2));
 
           const newId = isEdit ? id : uuidv4();
-          console.log('isEdit: ', isEdit);
-          console.log('newId: ', newId);
           calcActions.setCalc(calc.inputValues, newId);
           navigate(`/hourly/result/${newId}`);
         }}
@@ -260,6 +258,25 @@ const FormView = (props) => {
             <FieldSection>
               <FieldComponent
                 required
+                type="buttonSelect"
+                options={[
+                  {
+                    label: '일/주급',
+                    value: 'weekly',
+                  },
+                  {
+                    label: '월급',
+                    value: 'monthly',
+                    disabled: true,
+                  },
+                ]}
+                name="conversionType"
+                label="환산 기준을 선택해 주세요"
+              />
+            </FieldSection>
+            <FieldSection>
+              <FieldComponent
+                required
                 name="hourlyWage"
                 placeholder={9160}
                 label="시급을 입력해 주세요."
@@ -268,40 +285,6 @@ const FormView = (props) => {
             </FieldSection>
           </Step>
           <Step step={1} currentStep={step}>
-            {/* <FieldSection>
-              <FieldComponent
-                required
-                mapInputValuesToProps={({
-                  consistentHours,
-                  ...others
-                }) => ({
-                  ...others,
-                  hidden: !consistentHours,
-                })}
-                name="hoursPerDay"
-                placeholder="8"
-                label="일 근무시간"
-                type="number"
-              />
-            </FieldSection> */}
-
-            {/* <FieldSection>
-              <FieldComponent
-                required
-                mapInputValuesToProps={({
-                  consistentHours,
-                  ...others
-                }) => ({
-                  ...others,
-                  hidden: !consistentHours,
-                })}
-                name="daysWorked"
-                placeholder="8"
-                label="근무일수"
-                type="number"
-              />
-              </FieldSection> */}
-
             <FieldSection>
               <FieldComponent
                 name="weeklyHours"

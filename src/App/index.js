@@ -50,8 +50,6 @@ const routes = [
 ];
 
 const Wrapper = styled(Flex)`
-  flex-direction: row;
-  flex-grow: 1;
   box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 4px;
   height: 100%;
   overflow: auto;
@@ -62,13 +60,11 @@ const PageWrapper = styled.div`
   max-width: 100vw;
   padding-right: ${size('padding.default')};
   flex-grow: 1;
-  height: calc(100% - 40px);
 
   @media (max-width: ${size('mobileBreakpoint')}){
     padding-left: 0px;
     padding-right: 0px;
     padding-top: 50px;
-    height: calc(100% - 60px);
   }
 `;
 

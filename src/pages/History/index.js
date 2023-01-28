@@ -176,7 +176,7 @@ const History = ({
       <PageAction
         actions={[{
           label: '계산하기',
-          to: '/hourly/calc/new',
+          to: `/${tab}/calc/new`,
         }]}
       />
     </Wrapper>

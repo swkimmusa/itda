@@ -67,16 +67,21 @@ const ButtonRadio = ({
     <Container
       {...props}
     >
-      {options.map((option) => (
+      {options.map(({
+        value,
+        label,
+        ...others
+      }) => (
         <StyledButton
-          key={option.value}
+          key={value}
           highlight={highlight}
           onClick={() => {
-            onSelect(option.value);
+            onSelect(value);
           }}
-          label={option.label}
-          selected={option.value === selected}
+          label={label}
+          selected={value === selected}
           style={buttonStyle}
+          {...others}
         />
       ))}
     </Container>

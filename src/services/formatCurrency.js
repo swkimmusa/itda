@@ -21,4 +21,7 @@ export const formatCurrency = (v, opts = {}) => {
   });
 };
 
-export const roundCurrency = (v) => unformat(format(v, { decimalsDigits: 0 }));
+export const roundCurrency = (v, others = {}) => unformat(format(v, {
+  decimalsDigits: 0,
+  ...others,
+}));

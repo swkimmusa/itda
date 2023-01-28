@@ -27,7 +27,7 @@ import { hourlyCalc } from '../../services/calculator';
 const Wrapper = styled(Flex)`
   flex: 1;
   flex-direction: column;
-  background-color: ${palette('grayscale', 2)}
+  background-color: ${palette('blue', 1)}
 `;
 
 const SectionContainer = styled(Flex)`
@@ -81,17 +81,22 @@ const StyledIconCard = styled(IconCard)`
 
 const HistorySection = styled(SectionContainer)`
   flex-direction: column;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  flex: 0;
 `;
 
 const HistoryCardSection = styled(Flex)`
   flex-direction: row;
-  margin-top: 5px;
+  margin-top: 20px;
   flex-wrap: nowrap;
   overflow: auto;
+  margin-left: -5px;
+  margin-right: -5px;
 `;
 const StyledCalcSummHeader = styled(CalcSummHeader)`
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 `;
 
 const Home = ({
@@ -157,6 +162,7 @@ const Home = ({
           })}
         </HistoryCardSection>
       </HistorySection>
+
     </Wrapper>
   );
 };

@@ -11,7 +11,8 @@ import { ifProp } from 'styled-tools';
 import { format } from 'number-currency-format';
 import get from 'lodash/get';
 import {
-  formatNumber, formatCurrency,
+  formatCurrency,
+  roundCurrency,
 } from '../../services/formatCurrency';
 import Flex from '../../components/atoms/Flex';
 import Heading from '../../components/atoms/Heading';
@@ -34,6 +35,7 @@ const Wrapper = styled(Flex)`
 const SectionWrapper = styled(Flex)`
   flex-direction: column;
   margin-bottom: 40px;
+  display: ${ifProp('hidden', 'none')};
 `;
 
 const HeaderContainer = styled(Flex)`
@@ -97,6 +99,7 @@ const StyledIconText = styled(IconText)`
 const conversionLabels = {
   weekly: '주급',
   monthly: '월급',
+  annual: '연봉',
 };
 const ResultView = (props) => {
   const { calculationList } = props;
@@ -124,7 +127,7 @@ const ResultView = (props) => {
           <span>의 예상 실수령액은</span>
           &nbsp;
           <HeaderValue>
-            {formatCurrency(result.netWage)}
+            {formatCurrency((result.monthlyNetSalary) * (result.conversionType === 'annual' ? 12 : 1))}
           </HeaderValue>
           &nbsp;
           <span>
@@ -139,8 +142,8 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[
             {
-              label: '연봉',
-              value: formatCurrency(result.annualSalary),
+              label: result.conversionType === 'annual' ? '연봉' : '월급',
+              value: formatCurrency(result.salary),
               valueStyle: { fontWeight: 'bold' },
             },
             {
@@ -154,7 +157,7 @@ const ResultView = (props) => {
           ]}
         />
       </SectionWrapper>
-      <SectionWrapper>
+      <SectionWrapper hidden={result.conversionType === 'annual'}>
         <Heading level={3} palette="black">추가 수당</Heading>
         <StyledInfoCard
           info={[
@@ -190,6 +193,41 @@ const ResultView = (props) => {
       </SectionWrapper>
 
       <SectionWrapper>
+        <Heading level={3} palette="black">4대보험</Heading>
+        <StyledInfoCard
+          info={[
+            {
+              label: '국민연금',
+              value: formatCurrency(result.nationalPension),
+            },
+            {
+              label: '건강보험',
+              value: formatCurrency(result.healthInsurance),
+            },
+            {
+              label: '장기요양',
+              value: formatCurrency(result.longTermHealthInsurance),
+            },
+            {
+              label: '고용보험',
+              value: formatCurrency(result.employmentInsurance),
+            },
+            {
+              label: '공제액 합계',
+              value: formatCurrency(
+                result.nationalPension
+                + result.healthInsurance
+                + result.longTermHealthInsurance
+                + result.employmentInsurance,
+              ),
+              labelStyle: { fontWeight: 'bold' },
+              valueStyle: { fontWeight: 'bold' },
+            },
+          ]}
+        />
+      </SectionWrapper>
+
+      <SectionWrapper>
         <Heading level={3} palette="black">급여 정보</Heading>
         <StyledInfoCard
           info={[
@@ -198,21 +236,26 @@ const ResultView = (props) => {
               value: conversionLabels[result.conversionType],
             },
             {
-              label: '급여',
-              value: `${result.type} ${formatCurrency(result.annualSalary)}`,
+              label: '공제액 합계',
+              value: formatCurrency(result.totalInsurance),
+            },
+            {
+              label: '예상 실수령액 (월)',
+              value: formatCurrency(roundCurrency(result.monthlyNetSalary)),
+              valueStyle: { fontWeight: 'bold' },
+            },
+            {
+              label: '예상 실수령액 (연)',
+              value: formatCurrency(
+                roundCurrency(result.monthlyNetSalary)
+                * 12,
+              ),
+              valueStyle: { fontWeight: 'bold' },
             },
           ]}
         />
       </SectionWrapper>
-      <SectionWrapper>
-        <Heading level={3} palette="black">근무시간 정보</Heading>
-        <StyledInfoCard
-          info={[{
-            label: '총 근무시간',
-            value: result.hoursWorked,
-          }]}
-        />
-      </SectionWrapper>
+
       <PageAction actions={[]}>
         <Button label="계산 내역으로" to="/history" />
         <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} />
