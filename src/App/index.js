@@ -21,6 +21,9 @@ import HourlyResultView from '../pages/Hourly/ResultView';
 import AnnualFormView from '../pages/Annual/FormView';
 import AnnualResultView from '../pages/Annual/ResultView';
 
+import SeveranceFormView from '../pages/Severance/FormView';
+import SeveranceResultView from '../pages/Severance/ResultView';
+
 const routes = [
   {
     label: 'Recent History',
@@ -46,6 +49,16 @@ const routes = [
     label: 'AnnualResult',
     href: '/annual/result/:id',
     element: <AnnualResultView />,
+  },
+  {
+    label: 'SeveranceForm',
+    href: '/severance/calc/:id',
+    element: <SeveranceFormView />,
+  },
+  {
+    label: 'SeveranceResult',
+    href: '/severance/result/:id',
+    element: <SeveranceResultView />,
   },
 ];
 

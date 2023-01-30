@@ -23,7 +23,7 @@ import Input from '../../components/molecules/Input';
 import IconText from '../../components/molecules/IconText';
 import PageAction from '../../components/organisms/PageAction';
 import InfoCard from '../../components/molecules/InfoCard';
-import { hourlyCalc } from '../../services/calculator';
+import { severanceCalc } from '../../services/calculator';
 import calcActions from '../../store/calculation/actions';
 
 const Wrapper = styled(Flex)`
@@ -104,7 +104,7 @@ const ResultView = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const currentInputValues = calculationList[id];
-  const currentCalculation = hourlyCalc(currentInputValues);
+  const currentCalculation = severanceCalc(currentInputValues);
   const { result } = currentCalculation;
   const isEdit = !!id;
   console.log(result);
@@ -114,7 +114,7 @@ const ResultView = (props) => {
 
         <HeaderContainer>
           <StyledIconText
-            onClick={() => navigate(`/hourly/calc/${id}`, { replace: false })}
+            onClick={() => navigate(`/severance/calc/${id}`, { replace: false })}
             style={{
               display: 'inline',
               fontSize: 26,
@@ -169,7 +169,6 @@ const ResultView = (props) => {
       <SectionWrapper>
         <CardHeaderContainer>
           <Heading level={3} palette="black">근무정보</Heading>
-          {/* <Link to={`/hourly/calc/${id}?step=${0}`}>수정</Link> */}
 
         </CardHeaderContainer>
         <StyledInfoCard
@@ -187,16 +186,10 @@ const ResultView = (props) => {
       <SectionWrapper>
         <Heading level={3} palette="black">급여 정보</Heading>
         <StyledInfoCard
-          info={[
-            {
-              label: '환산기준',
-              value: conversionLabels[result.conversionType],
-            },
-            {
-              label: '급여',
-              value: `${result.type} ${formatCurrency(result.hourlyWage)}`,
-            },
-          ]}
+          info={[{
+            label: '환산기준',
+            value: conversionLabels[result.conversionType],
+          }]}
         />
       </SectionWrapper>
       <SectionWrapper>
@@ -210,13 +203,14 @@ const ResultView = (props) => {
       </SectionWrapper>
       <PageAction actions={[]}>
         <Button label="계산 내역으로" to="/history" />
+        <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} onClick={() => calcActions.deleteCalc(result.id)} />
         <Button
           transparent
           label="계산 결과 삭제"
           style={{ marginTop: 15 }}
           onClick={() => {
             calcActions.deleteCalc(id);
-            return navigate('/history?tab=hourly');
+            return navigate('/history?tab=severance');
           }}
         />
       </PageAction>

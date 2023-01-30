@@ -11,8 +11,7 @@ import { ifProp } from 'styled-tools';
 import { format } from 'number-currency-format';
 import get from 'lodash/get';
 import {
-  formatCurrency,
-  roundCurrency,
+  formatNumber, formatCurrency,
 } from '../../services/formatCurrency';
 import Flex from '../../components/atoms/Flex';
 import Heading from '../../components/atoms/Heading';
@@ -24,7 +23,7 @@ import Input from '../../components/molecules/Input';
 import IconText from '../../components/molecules/IconText';
 import PageAction from '../../components/organisms/PageAction';
 import InfoCard from '../../components/molecules/InfoCard';
-import { annualCalc } from '../../services/calculator';
+import { leaveCalc } from '../../services/calculator';
 import calcActions from '../../store/calculation/actions';
 
 const Wrapper = styled(Flex)`
@@ -36,7 +35,6 @@ const Wrapper = styled(Flex)`
 const SectionWrapper = styled(Flex)`
   flex-direction: column;
   margin-bottom: 40px;
-  display: ${ifProp('hidden', 'none')};
 `;
 
 const HeaderContainer = styled(Flex)`
@@ -100,14 +98,13 @@ const StyledIconText = styled(IconText)`
 const conversionLabels = {
   weekly: '주급',
   monthly: '월급',
-  annual: '연봉',
 };
 const ResultView = (props) => {
   const { calculationList } = props;
   const navigate = useNavigate();
   const { id } = useParams();
   const currentInputValues = calculationList[id];
-  const currentCalculation = annualCalc(currentInputValues);
+  const currentCalculation = leaveCalc(currentInputValues);
   const { result } = currentCalculation;
   const isEdit = !!id;
   console.log(result);
@@ -117,7 +114,7 @@ const ResultView = (props) => {
 
         <HeaderContainer>
           <StyledIconText
-            onClick={() => navigate(`/annual/calc/${id}`, { replace: false })}
+            onClick={() => navigate(`/leave/calc/${id}`, { replace: false })}
             style={{
               display: 'inline',
               fontSize: 26,
@@ -128,7 +125,7 @@ const ResultView = (props) => {
           <span>의 예상 실수령액은</span>
           &nbsp;
           <HeaderValue>
-            {formatCurrency((result.monthlyNetSalary) * (result.conversionType === 'annual' ? 12 : 1))}
+            {formatCurrency(result.netWage)}
           </HeaderValue>
           &nbsp;
           <span>
@@ -137,97 +134,56 @@ const ResultView = (props) => {
         </HeaderContainer>
       </SectionWrapper>
       <SectionWrapper>
+        <Heading level={3} palette="black">상세 정보</Heading>
+        <StyledInfoCard
+          info={[
+            {
+              label: '기본급',
+              value: formatCurrency(result.baseWage),
+            },
+            {
+              label: '주휴수당',
+              value: formatCurrency(result.overtimeWage),
+            },
+            // {
+            //   label: '월 급여',
+            //   value: result.totalWage,
+            // },
+            // {
+            //   label: '4대보험',
+            //   value: result.healthInsurance,
+            // },
+            // {
+            //   label: '공제액 합계',
+            //   value: result.healthInsurance,
+            //   valueStyle: { fontWeight: 'bold' },
+            // },
+            {
+              label: '월 급여',
+              value: formatCurrency(result.netWage),
+              valueStyle: { fontWeight: 'bold' },
+            },
+          ]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
         <CardHeaderContainer>
-          <Heading level={3} palette="black">정보</Heading>
+          <Heading level={3} palette="black">근무정보</Heading>
+          {/* <Link to={`/leave/calc/${id}?step=${0}`}>수정</Link> */}
+
         </CardHeaderContainer>
         <StyledInfoCard
           info={[
+            // {
+            //   label: '근무시간',
+            //   value: result.conversionType,
+            // },
             {
-              label: result.conversionType === 'annual' ? '연봉' : '월급',
-              value: formatCurrency(result.salary),
-              valueStyle: { fontWeight: 'bold' },
-            },
-            {
-              label: '부양 가족 수',
-              value: `${result.numOfFamily}명`,
-            },
-            {
-              label: '20세 이하 자녀 수',
-              value: `${result.numOfFamilyUnderAge}명`,
-            },
-          ]}
+              label: '상시 근무인원',
+              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
+            }]}
         />
       </SectionWrapper>
-      <SectionWrapper hidden={result.conversionType === 'annual'}>
-        <Heading level={3} palette="black">추가 수당</Heading>
-        <StyledInfoCard
-          info={[
-            {
-              label: `연장근로 - ${result.overtimeWorkHours}시간`,
-              value: formatCurrency(result.overtimeWorkWage),
-            },
-            {
-              label: `야간근로 - ${result.nightTimeWorkHours}시간`,
-              value: formatCurrency(result.nightTimeWorkWage),
-            },
-            {
-              label: `휴일근로 - ${result.holidayWorkHours}시간`,
-              value: formatCurrency(result.holidayWorkWage),
-            },
-            {
-              label: `휴일연장근로 - ${result.holidayOvertimeWorkHours}시간`,
-              value: formatCurrency(result.holidayOvertimeWorkWage),
-            },
-            {
-              label: '총 추가 수당',
-              value: formatCurrency(
-                result.overtimeWorkWage
-                + result.nightTimeWorkWage
-                + result.holidayWorkWage
-                + result.holidayOvertimeWorkWage,
-              ),
-              labelStyle: { fontWeight: 'bold' },
-              valueStyle: { fontWeight: 'bold' },
-            },
-          ]}
-        />
-      </SectionWrapper>
-
-      <SectionWrapper>
-        <Heading level={3} palette="black">4대보험</Heading>
-        <StyledInfoCard
-          info={[
-            {
-              label: '국민연금',
-              value: formatCurrency(result.nationalPension),
-            },
-            {
-              label: '건강보험',
-              value: formatCurrency(result.healthInsurance),
-            },
-            {
-              label: '장기요양',
-              value: formatCurrency(result.longTermHealthInsurance),
-            },
-            {
-              label: '고용보험',
-              value: formatCurrency(result.employmentInsurance),
-            },
-            {
-              label: '공제액 합계',
-              value: formatCurrency(
-                result.nationalPension
-                + result.healthInsurance
-                + result.longTermHealthInsurance
-                + result.employmentInsurance,
-              ),
-              labelStyle: { fontWeight: 'bold' },
-              valueStyle: { fontWeight: 'bold' },
-            },
-          ]}
-        />
-      </SectionWrapper>
-
       <SectionWrapper>
         <Heading level={3} palette="black">급여 정보</Heading>
         <StyledInfoCard
@@ -237,36 +193,30 @@ const ResultView = (props) => {
               value: conversionLabels[result.conversionType],
             },
             {
-              label: '공제액 합계',
-              value: formatCurrency(result.totalInsurance),
-            },
-            {
-              label: '예상 실수령액 (월)',
-              value: formatCurrency(roundCurrency(result.monthlyNetSalary)),
-              valueStyle: { fontWeight: 'bold' },
-            },
-            {
-              label: '예상 실수령액 (연)',
-              value: formatCurrency(
-                roundCurrency(result.monthlyNetSalary)
-                * 12,
-              ),
-              valueStyle: { fontWeight: 'bold' },
+              label: '급여',
+              value: `${result.type} ${formatCurrency(result.leaveWage)}`,
             },
           ]}
         />
       </SectionWrapper>
-
+      <SectionWrapper>
+        <Heading level={3} palette="black">근무시간 정보</Heading>
+        <StyledInfoCard
+          info={[{
+            label: '총 근무시간',
+            value: result.hoursWorked,
+          }]}
+        />
+      </SectionWrapper>
       <PageAction actions={[]}>
-        <Button label="계산 내역으로" to="/history" />
-        <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} />
+        <Button label="계산 내역으로" to="/history?tab=leave" />
         <Button
           transparent
           label="계산 결과 삭제"
           style={{ marginTop: 15 }}
           onClick={() => {
             calcActions.deleteCalc(id);
-            return navigate('/history?tab=annual');
+            return navigate('/history?tab=leave');
           }}
         />
       </PageAction>

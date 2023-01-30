@@ -10,7 +10,6 @@ import { roundCurrency } from '../formatCurrency';
 
 const defaultInputValues = {
   smallBusiness: false,
-  over15Weekly: false,
   conversionType: 'daily', // daily weekly monthly
   hourlyWage: null,
   hoursPerDay: null,

@@ -21,7 +21,10 @@ export const formatCurrency = (v, opts = {}) => {
   });
 };
 
-export const roundCurrency = (v, others = {}) => unformat(format(v, {
-  decimalsDigits: 0,
-  ...others,
-}));
+export const roundCurrency = (v, others = {}, roundUp = true) => {
+  const rounded = Math.floor(v * 100) / 100;
+  return unformat(format(rounded, {
+    decimalsDigits: 0,
+    ...others,
+  }));
+};

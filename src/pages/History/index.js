@@ -128,7 +128,7 @@ const History = ({
               label: '연차',
             },
             {
-              value: 'severence',
+              value: 'severance',
               label: '퇴직금',
             },
           ]}

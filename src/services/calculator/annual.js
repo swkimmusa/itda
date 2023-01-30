@@ -150,18 +150,26 @@ const getInsuranceGroup = (inputValues) => {
     // healthInsuranceRate,
     // employmentInsurance,
   } = inputValues;
-
+  console.log(
+    (pensionMonthlySalary - nonTaxableIncome)
+    * nationalPensionRate
+    * 0.5,
+  );
   const nationalPension = roundCurrency(
-    Math.max((
-      (pensionMonthlySalary - nonTaxableIncome)
-        * nationalPensionRate
-        * 0.5,
-      maxNationalPensionRate
-    )),
+    Math.min(
+      Math.max(
+        Math.min(pensionMonthlySalary - nonTaxableIncome, 0)
+          * nationalPensionRate
+          * 0.5,
+        maxNationalPensionRate,
+      ),
+      0,
+    ),
   ); // TODO round down
-  const healthInsurance = roundCurrency((monthlyTotalSalary - nonTaxableIncome) * healthInsuranceRate * 0.5); // TODO round down
+  const taxableIncome = Math.max(monthlyTotalSalary - nonTaxableIncome, 0);
+  const healthInsurance = roundCurrency((taxableIncome) * healthInsuranceRate * 0.5); // TODO round down
   const longTermHealthInsurance = roundCurrency(healthInsurance * longTermHealthInsuranceRate); // TODO round down
-  const employmentInsurance = roundCurrency((monthlyTotalSalary - nonTaxableIncome) * employmentInsuranceRate * 0.5); // TODO round down
+  const employmentInsurance = roundCurrency((taxableIncome) * employmentInsuranceRate * 0.5); // TODO round down
 
   return {
     nationalPension,
@@ -177,7 +185,7 @@ const getMonthlyNetSalary = (inputValues) => {
     monthlyTotalSalary,
     totalInsurance,
   } = inputValues;
-  return roundCurrency(monthlyTotalSalary - totalInsurance);
+  return roundCurrency(Math.max(monthlyTotalSalary - totalInsurance, 0));
 };
 
 const calculate = (inputValues) => {
