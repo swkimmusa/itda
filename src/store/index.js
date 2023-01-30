@@ -7,7 +7,7 @@ import {
   persistStore, persistReducer,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
-import hardSet from 'redux-persist/lib/stateReconciler/hardSet
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 import reducer from './reducer';
 import saga from './saga';
 

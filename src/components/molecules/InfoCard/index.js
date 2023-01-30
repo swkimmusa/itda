@@ -53,7 +53,7 @@ const InfoCard = ({
     >
       {info.map((data) => {
         return (
-          <KeyValue key={data.label} valueStyle={valueStyle} {...data} />
+          <KeyValue key={data.key || data.label + data.value} valueStyle={valueStyle} {...data} />
         );
       })}
     </Card>

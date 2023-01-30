@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import {
   useParams, useNavigate,
 } from 'react-router-dom';
 import styled from 'styled-components';
-
+import dayjs from 'dayjs';
 import { connect } from 'react-redux';
 import {
   size, palette, font,
@@ -10,12 +11,14 @@ import {
 import { ifProp } from 'styled-tools';
 import { format } from 'number-currency-format';
 import get from 'lodash/get';
+import moment from 'moment';
 import {
   formatNumber, formatCurrency,
 } from '../../services/formatCurrency';
 import Flex from '../../components/atoms/Flex';
 import Heading from '../../components/atoms/Heading';
 import Button from '../../components/atoms/Button';
+import ButtonRadio from '../../components/molecules/ButtonRadio';
 import Text from '../../components/atoms/P';
 import Label from '../../components/atoms/Label';
 import Link from '../../components/atoms/Link';
@@ -95,17 +98,25 @@ const StyledIconText = styled(IconText)`
   }
 `;
 
-const conversionLabels = {
-  weekly: '주급',
-  monthly: '월급',
-};
+const conversionLabels = {};
 const ResultView = (props) => {
   const { calculationList } = props;
   const navigate = useNavigate();
   const { id } = useParams();
+  const [
+    tab,
+    setTab,
+  ] = useState('joinDate');
   const currentInputValues = calculationList[id];
   const currentCalculation = leaveCalc(currentInputValues);
+
   const { result } = currentCalculation;
+  const {
+    joinDateBasedLeaves,
+    accountingDateBasedLeaves,
+  } = result;
+  const leaves = tab === 'joinDate' ? joinDateBasedLeaves : accountingDateBasedLeaves;
+  const total = leaves.reduce((ac, cu) => ac + cu.leave, 0);
   const isEdit = !!id;
   console.log(result);
   return (
@@ -122,10 +133,10 @@ const ResultView = (props) => {
           >
             {currentInputValues.name}
           </StyledIconText>
-          <span>의 예상 실수령액은</span>
+          <span>의 연차발생일은 </span>
           &nbsp;
           <HeaderValue>
-            {formatCurrency(result.netWage)}
+            {total}
           </HeaderValue>
           &nbsp;
           <span>
@@ -134,78 +145,50 @@ const ResultView = (props) => {
         </HeaderContainer>
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">상세 정보</Heading>
-        <StyledInfoCard
-          info={[
+        <ButtonRadio
+          selected={tab}
+          onSelect={setTab}
+          highlight
+          options={[
             {
-              label: '기본급',
-              value: formatCurrency(result.baseWage),
+              label: '입사일 기준',
+              value: 'joinDate',
             },
             {
-              label: '주휴수당',
-              value: formatCurrency(result.overtimeWage),
-            },
-            // {
-            //   label: '월 급여',
-            //   value: result.totalWage,
-            // },
-            // {
-            //   label: '4대보험',
-            //   value: result.healthInsurance,
-            // },
-            // {
-            //   label: '공제액 합계',
-            //   value: result.healthInsurance,
-            //   valueStyle: { fontWeight: 'bold' },
-            // },
-            {
-              label: '월 급여',
-              value: formatCurrency(result.netWage),
-              valueStyle: { fontWeight: 'bold' },
+              label: '회계일 기준',
+              value: 'accountingDate',
             },
           ]}
         />
-      </SectionWrapper>
-      <SectionWrapper>
-        <CardHeaderContainer>
-          <Heading level={3} palette="black">근무정보</Heading>
-          {/* <Link to={`/leave/calc/${id}?step=${0}`}>수정</Link> */}
 
-        </CardHeaderContainer>
-        <StyledInfoCard
-          info={[
-            // {
-            //   label: '근무시간',
-            //   value: result.conversionType,
-            // },
-            {
-              label: '상시 근무인원',
-              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
-            }]}
-        />
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">급여 정보</Heading>
+        <Heading level={3} palette="black">근무 정보</Heading>
         <StyledInfoCard
           info={[
             {
-              label: '환산기준',
-              value: conversionLabels[result.conversionType],
+              label: '입사일',
+              value: result.joinDate,
             },
             {
-              label: '급여',
-              value: `${result.type} ${formatCurrency(result.leaveWage)}`,
+              label: '정산 기준일',
+              value: result.payDate,
             },
           ]}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">근무시간 정보</Heading>
+        <Heading level={3} palette="black">연차 발생</Heading>
         <StyledInfoCard
-          info={[{
-            label: '총 근무시간',
-            value: result.hoursWorked,
-          }]}
+          info={leaves.map(({
+            date,
+            leave,
+          }) => {
+            return {
+              label: moment(date).format('YYYY-MMMM-Do'),
+              value: leave,
+            };
+          })}
         />
       </SectionWrapper>
       <PageAction actions={[]}>

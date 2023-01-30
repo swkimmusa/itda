@@ -153,15 +153,8 @@ const ProgressText = styled(Text)`
 `;
 
 const getDefaultInitialValues = () => ({
-  type: 'hourly',
+  type: 'leave',
   smallBusiness: false,
-  consistentHours: true,
-  conversionType: 'weekly',
-  insuranceType: 'employee',
-  weeklyHours: {
-    startDate: moment().toISOString(),
-    list: [],
-  },
 });
 const FormView = (props) => {
   const { calculationList } = props;
@@ -210,15 +203,15 @@ const FormView = (props) => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values) => {
-          if (step < 2) return;
+          if (step < 1) return;
           await new Promise((r) => setTimeout(r, 500));
 
-          const calc = hourlyCalc(values);
+          const calc = leaveCalc(values);
           alert(JSON.stringify(calc, null, 2));
 
           const newId = isEdit ? id : uuidv4();
           calcActions.setCalc(calc.inputValues, newId);
-          navigate(`/hourly/result/${newId}`);
+          navigate(`/leave/result/${newId}`);
         }}
       >
         <StyledForm>
