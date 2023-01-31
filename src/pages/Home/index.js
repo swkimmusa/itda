@@ -132,7 +132,7 @@ const Home = ({
         <IconCardsContainer>
           <StyledIconCard src={hourly} label="시급계산기" onClick={() => navigate('/hourly/calc/new')} />
           <StyledIconCard src={yearly} label="연봉계산기" onClick={() => navigate('/annual/calc/new')} />
-          <StyledIconCard src={calendar} label="연차계산기" />
+          <StyledIconCard src={calendar} label="연차계산기" onClick={() => navigate('/leave/calc/new')} />
           <StyledIconCard src={calc} label="퇴직금계산기" onClick={() => navigate('/severance/calc/new')} />
         </IconCardsContainer>
       </SectionContainer>
