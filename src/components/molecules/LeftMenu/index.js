@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import startCase from 'lodash/startCase';
 import { palette } from 'styled-theme';
 import { ifProp } from 'styled-tools';
+import * as serviceWorkerRegistration from '../../../serviceWorkerRegistration';
 
 import Link from '../../atoms/Link';
 
@@ -73,7 +74,7 @@ const LeftMenu = ({
     <LogoWrapper to="/">
       <div>logo</div>
     </LogoWrapper>
-    <MenuWrapper onClick={() => { onClose(); }}>
+    <MenuWrapper>
       <ul>
         {links.map((link) => (
           <li key={link.href}>
@@ -94,11 +95,15 @@ const LeftMenu = ({
       </ul>
       <MenuLink
         to="/"
-        style={{
-          // height: 'auto',
-          // alignSelf: 'flex-end',
+        onClick={() => {
+          onClose();
+          serviceWorkerRegistration.unregister()
+            .then((unregResult) => {
+              console.log(unregResult);
+              // You can check if successful with Promise result 'unregResult'
+              window.location.reload();
+            });
         }}
-        onClick={() => { onClose(); }}
       >Log Out
       </MenuLink>
     </MenuWrapper>
