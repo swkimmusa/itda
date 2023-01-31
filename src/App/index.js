@@ -32,6 +32,7 @@ const routes = [
     label: 'Recent History',
     href: '/history',
     element: <History />,
+    rootRoute: true,
   },
   {
     label: 'HourlyForm',
@@ -97,7 +98,7 @@ const PageWrapper = styled.div`
 const Layout = () => {
   return (
     <Wrapper>
-      <LeftMenu links={routes} />
+      <LeftMenu links={routes.filter((v) => v.rootRoute)} />
       <PageWrapper>
         <Header />
 
