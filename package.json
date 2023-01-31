@@ -1,7 +1,6 @@
 {
   "name": "pacto-app",
   "version": "0.1.0",
-  "homepage": "https://swkimmusa.github.io/itda",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "1.8.2",
@@ -58,8 +57,17 @@
     "storybook": "start-storybook -p 6006 -s public",
     "storybook:clear-cache": "start-storybook --no-manager-cache",
     "build-storybook": "build-storybook -s public",
-    "predeploy": "npm run build:page",
-    "deploy": "gh-pages -d build"
+
+    "predeploy:page": "npm run build:page",
+    "deploy:page": "gh-pages -d build",
+
+    "predeploy:staging": "REACT_APP_STAGE=staging npm run build",
+    "deploy:staging": "aws s3 sync build/ s3://itda-app-staging --profile itda",
+    "postdeploy:staging": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda",
+
+    "predeploy": "REACT_APP_STAGE=production npm run build",
+    "deploy": "aws s3 sync build/ s3://mint-app-production --profile mint",
+    "postdeploy": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda"
   },
   "browserslist": {
     "production": [
