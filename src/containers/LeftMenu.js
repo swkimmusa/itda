@@ -1,4 +1,6 @@
 // import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import LeftMenu from '../components/molecules/LeftMenu';
@@ -8,7 +10,18 @@ import leftMenuAction from '../store/leftMenu/actions';
 // import leftMenuAction from '../store/left-menu/actions';
 
 const LeftMenuContainer = (props) => {
+  const {
+    pathname,
+    key,
+  } = useLocation();
   const leftMenuOpen = useSelector((state) => state.leftMenu.open);
+  useEffect(() => {
+    console.log('closing left menu due to location change');
+    leftMenuAction.close();
+  }, [
+    pathname,
+    key,
+  ]);
 
   return (
     <LeftMenuContainerComp onClose={leftMenuAction.close} open={leftMenuOpen}>
