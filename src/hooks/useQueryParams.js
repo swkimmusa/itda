@@ -46,7 +46,7 @@ export default (options = {}) => {
   useEffect(() => {
     if (!initialQueryParamsString) return;
     if (queryString) return;
-    navigate(`?${initialQueryParamsString}`);
+    navigate(`?${initialQueryParamsString}`, { replace: true });
   }, [/* only runs once on initial render */]);
 
   return {
