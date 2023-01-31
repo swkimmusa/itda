@@ -155,6 +155,8 @@ const ProgressText = styled(Text)`
 const getDefaultInitialValues = () => ({
   type: 'severance',
   smallBusiness: true,
+  annualBonus: 0,
+  annualTotalAddedWage: 0,
 });
 const FormView = (props) => {
   const { calculationList } = props;
@@ -211,7 +213,7 @@ const FormView = (props) => {
 
           const newId = isEdit ? id : uuidv4();
           calcActions.setCalc(calc.inputValues, newId);
-          navigate(`/hourly/result/${newId}`);
+          navigate(`/severance/result/${newId}`);
         }}
       >
         <StyledForm>
@@ -246,9 +248,9 @@ const FormView = (props) => {
             <FieldSection>
               <FieldComponent
                 required
-                name="last3MonthsSalary"
+                name="monthlySalary"
                 type="number"
-                label="퇴직일 포함 최종 3개월 입금을 입력해 주세요."
+                label="월급을 입력해 주세요."
               />
             </FieldSection>
             <FieldSection>

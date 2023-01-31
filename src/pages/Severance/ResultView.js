@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import {
   useParams, useNavigate,
 } from 'react-router-dom';
 import styled from 'styled-components';
-
+import dayjs from 'dayjs';
 import { connect } from 'react-redux';
 import {
   size, palette, font,
@@ -10,12 +11,14 @@ import {
 import { ifProp } from 'styled-tools';
 import { format } from 'number-currency-format';
 import get from 'lodash/get';
+import moment from 'moment';
 import {
   formatNumber, formatCurrency,
 } from '../../services/formatCurrency';
 import Flex from '../../components/atoms/Flex';
 import Heading from '../../components/atoms/Heading';
 import Button from '../../components/atoms/Button';
+import ButtonRadio from '../../components/molecules/ButtonRadio';
 import Text from '../../components/atoms/P';
 import Label from '../../components/atoms/Label';
 import Link from '../../components/atoms/Link';
@@ -95,19 +98,25 @@ const StyledIconText = styled(IconText)`
   }
 `;
 
-const conversionLabels = {
-  weekly: '주급',
-  monthly: '월급',
-};
+const conversionLabels = {};
 const ResultView = (props) => {
   const { calculationList } = props;
   const navigate = useNavigate();
   const { id } = useParams();
   const currentInputValues = calculationList[id];
   const currentCalculation = severanceCalc(currentInputValues);
+
   const { result } = currentCalculation;
-  const isEdit = !!id;
+  const {
+    joinDate,
+    leaveDate,
+    ordinaryMonthlySalaryList,
+    annualBonusSeverance,
+    annualTotalAddedWageSeverance,
+  } = result;
   console.log(result);
+  const total = ordinaryMonthlySalaryList.reduce((ac, cu) => ac + cu.ordinarySalary, 0) + annualBonusSeverance + annualTotalAddedWageSeverance;
+  const isEdit = !!id;
   return (
     <Wrapper>
       <SectionWrapper>
@@ -122,10 +131,10 @@ const ResultView = (props) => {
           >
             {currentInputValues.name}
           </StyledIconText>
-          <span>의 예상 실수령액은</span>
+          <span>의 예상 퇴직금은 </span>
           &nbsp;
           <HeaderValue>
-            {formatCurrency(result.netWage)}
+            {formatCurrency(total)}
           </HeaderValue>
           &nbsp;
           <span>
@@ -134,76 +143,51 @@ const ResultView = (props) => {
         </HeaderContainer>
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">상세 정보</Heading>
+        <Heading level={3} palette="black">근무 정보</Heading>
         <StyledInfoCard
           info={[
             {
-              label: '기본급',
-              value: formatCurrency(result.baseWage),
+              label: '입사일',
+              value: result.joinDate,
             },
             {
-              label: '주휴수당',
-              value: formatCurrency(result.overtimeWage),
-            },
-            // {
-            //   label: '월 급여',
-            //   value: result.totalWage,
-            // },
-            // {
-            //   label: '4대보험',
-            //   value: result.healthInsurance,
-            // },
-            // {
-            //   label: '공제액 합계',
-            //   value: result.healthInsurance,
-            //   valueStyle: { fontWeight: 'bold' },
-            // },
-            {
-              label: '월 급여',
-              value: formatCurrency(result.netWage),
-              valueStyle: { fontWeight: 'bold' },
+              label: '퇴사 기준일',
+              value: result.leaveDate,
             },
           ]}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <CardHeaderContainer>
-          <Heading level={3} palette="black">근무정보</Heading>
-
-        </CardHeaderContainer>
+        <Heading level={3} palette="black">퇴직금 발생</Heading>
+        <StyledInfoCard
+          info={ordinaryMonthlySalaryList.map(({
+            date,
+            ordinarySalary,
+          }) => {
+            return {
+              label: moment(date).format('YYYY-MMMM-Do'),
+              value: ordinarySalary,
+            };
+          })}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <Heading level={3} palette="black">상여금 추가</Heading>
         <StyledInfoCard
           info={[
-            // {
-            //   label: '근무시간',
-            //   value: result.conversionType,
-            // },
             {
-              label: '상시 근무인원',
-              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
-            }]}
-        />
-      </SectionWrapper>
-      <SectionWrapper>
-        <Heading level={3} palette="black">급여 정보</Heading>
-        <StyledInfoCard
-          info={[{
-            label: '환산기준',
-            value: conversionLabels[result.conversionType],
-          }]}
-        />
-      </SectionWrapper>
-      <SectionWrapper>
-        <Heading level={3} palette="black">근무시간 정보</Heading>
-        <StyledInfoCard
-          info={[{
-            label: '총 근무시간',
-            value: result.hoursWorked,
-          }]}
+              label: '상여금',
+              value: result.annualBonusSeverance,
+            },
+            {
+              label: '연차수당',
+              value: result.annualTotalAddedWageSeverance,
+            },
+          ]}
         />
       </SectionWrapper>
       <PageAction actions={[]}>
-        <Button label="계산 내역으로" to="/history" />
-        <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} onClick={() => calcActions.deleteCalc(result.id)} />
+        <Button label="계산 내역으로" to="/history?tab=severance" />
         <Button
           transparent
           label="계산 결과 삭제"

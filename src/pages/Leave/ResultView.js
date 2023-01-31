@@ -136,7 +136,7 @@ const ResultView = (props) => {
           <span>의 연차발생일은 </span>
           &nbsp;
           <HeaderValue>
-            {total}
+            {total}일
           </HeaderValue>
           &nbsp;
           <span>
