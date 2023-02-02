@@ -13,6 +13,7 @@ import Flex from '../../components/atoms/Flex';
 import Button from '../../components/atoms/Button';
 import propTypes from '../../propTypes';
 import Heading from '../../components/atoms/Heading';
+import Link from '../../components/atoms/Link';
 import IconCard from '../../components/molecules/IconCard';
 import homebackground from '../../assets/image/home-background.png';
 
@@ -73,9 +74,13 @@ const ErrorWrapper = styled.div`
   }
 `;
 
-const StyledIconCard = styled(IconCard)`
+const StyledIconCardContainer = styled(Link)`
   margin: 5px;
   min-width: calc(50% - 10px);
+`;
+const StyledIconCard = styled(IconCard)`
+  // margin: 5px;
+  // min-width: calc(50% - 10px);
   align-items: center;
 `;
 
@@ -130,10 +135,18 @@ const Home = ({
       </HeaderContainer>
       <SectionContainer>
         <IconCardsContainer>
-          <StyledIconCard src={hourly} label="시급계산기" onClick={() => navigate('/hourly/calc/new')} />
-          <StyledIconCard src={yearly} label="연봉계산기" onClick={() => navigate('/annual/calc/new')} />
-          <StyledIconCard src={calendar} label="연차계산기" onClick={() => navigate('/leave/calc/new')} />
-          <StyledIconCard src={calc} label="퇴직금계산기" onClick={() => navigate('/severance/calc/new')} />
+          <StyledIconCardContainer to="/hourly/calc/new">
+            <StyledIconCard src={hourly} label="시급계산기" />
+          </StyledIconCardContainer>
+          <StyledIconCardContainer to="/annual/calc/new">
+            <StyledIconCard src={yearly} label="연봉계산기" />
+          </StyledIconCardContainer>
+          <StyledIconCardContainer to="/leave/calc/new">
+            <StyledIconCard src={calendar} label="연차계산기" />
+          </StyledIconCardContainer>
+          <StyledIconCardContainer to="/severance/calc/new">
+            <StyledIconCard src={calc} label="퇴직금계산기" />
+          </StyledIconCardContainer>
         </IconCardsContainer>
       </SectionContainer>
 
