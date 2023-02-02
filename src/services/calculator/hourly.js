@@ -78,16 +78,21 @@ const getOvertimeHours = (inputValues) => {
     contractWeeklyHours,
     daysPerWeek,
     hoursPerDay,
+    weeklyHours,
+    hoursWorked,
   } = inputValues;
   if (overtimeWorkHours) return overtimeWorkHours;
-
+  console.log(daysWorked);
+  console.log(contractWeeklyHours);
+  console.log(hoursPerDay);
+  console.log(weeklyHours.list.length);
+  console.log(hoursWorked - contractWeeklyHours);
   if (
-    !!daysWorked
-    && !!hoursPerDay
+    ((!!hoursPerDay && !!daysWorked) || weeklyHours.list.length > 0)
     && !!contractWeeklyHours
-  ) return Math.max((daysWorked * hoursPerDay) - contractWeeklyHours, 0);
+  ) return Math.max(hoursWorked - contractWeeklyHours, 0);
 
-  return null;
+  return 0;
 };
 
 const getOvertimeWage = (inputValues) => {
@@ -95,6 +100,8 @@ const getOvertimeWage = (inputValues) => {
     overtimeWorkHours,
     hourlyWage,
   } = inputValues;
+
+  // const multiplier
   return roundCurrency(1.5 * overtimeWorkHours * hourlyWage);
 };
 
@@ -127,12 +134,12 @@ const calculate = (inputValues) => {
 
   mergedInputValues = {
     ...mergedInputValues,
-    healthInsurance: roundCurrency(mergedInputValues.totalWage * 0.009),
+    employmentInsurance: roundCurrency(mergedInputValues.totalWage * 0.009),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    netWage: roundCurrency(mergedInputValues.totalWage - mergedInputValues.healthInsurance),
+    netWage: roundCurrency(mergedInputValues.totalWage - mergedInputValues.employmentInsurance),
   };
 
   return {

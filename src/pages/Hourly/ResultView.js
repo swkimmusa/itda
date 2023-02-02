@@ -149,15 +149,15 @@ const ResultView = (props) => {
             //   label: '월 급여',
             //   value: result.totalWage,
             // },
-            // {
-            //   label: '4대보험',
-            //   value: result.healthInsurance,
-            // },
-            // {
-            //   label: '공제액 합계',
-            //   value: result.healthInsurance,
-            //   valueStyle: { fontWeight: 'bold' },
-            // },
+            {
+              label: '고용보험',
+              value: formatCurrency(result.employmentInsurance),
+            },
+            {
+              label: '공제액 합계',
+              value: formatCurrency(result.employmentInsurance),
+              valueStyle: { fontWeight: 'bold' },
+            },
             {
               label: '월 급여',
               value: formatCurrency(result.netWage),
@@ -169,19 +169,35 @@ const ResultView = (props) => {
       <SectionWrapper>
         <CardHeaderContainer>
           <Heading level={3} palette="black">근무정보</Heading>
-          {/* <Link to={`/hourly/calc/${id}?step=${0}`}>수정</Link> */}
-
         </CardHeaderContainer>
         <StyledInfoCard
           info={[
-            // {
-            //   label: '근무시간',
-            //   value: result.conversionType,
-            // },
+            {
+              label: '근무시간',
+              value: result.hoursWorked,
+            },
             {
               label: '상시 근무인원',
               value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
-            }]}
+            },
+          ]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <CardHeaderContainer>
+          <Heading level={3} palette="black">공제정보</Heading>
+        </CardHeaderContainer>
+        <StyledInfoCard
+          info={[
+            {
+              label: '고용보험',
+              // value: result.employ,
+            },
+            {
+              label: '상시 근무인원',
+              // value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
+            },
+          ]}
         />
       </SectionWrapper>
       <SectionWrapper>

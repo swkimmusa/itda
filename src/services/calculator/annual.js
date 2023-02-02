@@ -167,9 +167,9 @@ const getInsuranceGroup = (inputValues) => {
     ),
   ); // TODO round down
   const taxableIncome = Math.max(monthlyTotalSalary - nonTaxableIncome, 0);
-  const healthInsurance = roundCurrency((taxableIncome) * healthInsuranceRate * 0.5); // TODO round down
-  const longTermHealthInsurance = roundCurrency(healthInsurance * longTermHealthInsuranceRate); // TODO round down
-  const employmentInsurance = roundCurrency((taxableIncome) * employmentInsuranceRate * 0.5); // TODO round down
+  const healthInsurance = roundCurrency((taxableIncome) * healthInsuranceRate * 0.5, {}, 'down'); // TODO round down
+  const longTermHealthInsurance = roundCurrency(healthInsurance * longTermHealthInsuranceRate, {}, 'down'); // TODO round down
+  const employmentInsurance = roundCurrency((taxableIncome) * employmentInsuranceRate * 0.5, {}, 'down'); // TODO round down
 
   return {
     nationalPension,
