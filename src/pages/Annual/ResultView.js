@@ -259,7 +259,6 @@ const ResultView = (props) => {
 
       <PageAction actions={[]}>
         <Button label="계산 내역으로" to="/history" />
-        <Button transparent label="계산 결과 삭제" style={{ marginTop: 15 }} />
         <Button
           transparent
           label="계산 결과 삭제"
