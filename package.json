@@ -66,7 +66,7 @@
     "postdeploy:staging": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda",
 
     "predeploy": "REACT_APP_STAGE=production npm run build",
-    "deploy": "aws s3 sync build/ s3://mint-app-production --profile mint",
+    "deploy": "aws s3 sync build/ s3://itda-app-production --profile itda",
     "postdeploy": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda"
   },
   "browserslist": {
