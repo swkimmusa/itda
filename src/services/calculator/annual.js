@@ -6,7 +6,9 @@ import moment from 'moment';
 import {
   format, unformat,
 } from 'number-currency-format';
-import { roundCurrency } from '../formatCurrency';
+import {
+  roundTo, roundCurrency,
+} from '../formatCurrency';
 
 export const nationalPensionRate = 0.09;
 export const healthInsuranceRate = 0.0709;
@@ -58,12 +60,12 @@ const getAverageMonthlySalary = (inputValues) => {
   } = inputValues;
 
   if (conversionType === 'annual') {
-    if (salary && salary > 0) return roundCurrency(salary / 12);
+    if (salary && salary > 0) return roundCurrency(salary / 12, { decimalsDigits: 2 }, 'up', 4);
     return 0;
   }
 
   if (conversionType === 'monthly') {
-    if (salary && salary > 0) return roundCurrency(salary);
+    if (salary && salary > 0) return roundCurrency(salary, { decimalsDigits: 2 }, 'up', 4);
     return 0;
   }
 
@@ -89,7 +91,7 @@ const getOrdinaryMonthlySalary = (inputValues) => {
 
 const getOrdinaryHourlySalary = (inputValues) => {
   const { averageMonthlySalary } = inputValues;
-  return averageMonthlySalary / 209; // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
+  return roundTo(averageMonthlySalary / 209, 0, 'down'); // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
 };
 
 const getAddedWageGroup = (inputValues) => {
@@ -115,10 +117,10 @@ const getAddedWageGroup = (inputValues) => {
     };
   }
 
-  const overtimeWorkWage = roundCurrency(overtimeWorkHours * ordinaryHourlySalary * 1.5);
-  const nightTimeWorkWage = roundCurrency(nightTimeWorkHours * ordinaryHourlySalary * 0.5);
-  const holidayWorkWage = roundCurrency(holidayWorkHours * ordinaryHourlySalary * 1.5);
-  const holidayOvertimeWorkWage = roundCurrency(holidayOvertimeWorkHours * ordinaryHourlySalary * 2);
+  const overtimeWorkWage = roundCurrency(overtimeWorkHours * ordinaryHourlySalary * 1.5, {}, 'up', 4);
+  const nightTimeWorkWage = roundCurrency(nightTimeWorkHours * ordinaryHourlySalary * 0.5, {}, 'up', 4);
+  const holidayWorkWage = roundCurrency(holidayWorkHours * ordinaryHourlySalary * 1.5, {}, 'up', 4);
+  const holidayOvertimeWorkWage = roundCurrency(holidayOvertimeWorkHours * ordinaryHourlySalary * 2, {}, 'up', 4);
 
   const addedWage = {
     overtimeWorkWage,
@@ -137,7 +139,7 @@ const getMonthlyTotalSalary = (inputValues) => {
     totalAddedWage,
     averageMonthlySalary,
   } = inputValues;
-  return roundCurrency(averageMonthlySalary + totalAddedWage);
+  return roundCurrency(averageMonthlySalary + totalAddedWage, {}, 'up', 4);
 };
 
 const getInsuranceGroup = (inputValues) => {
@@ -155,22 +157,40 @@ const getInsuranceGroup = (inputValues) => {
     * nationalPensionRate
     * 0.5,
   );
-  const nationalPension = roundCurrency(
-    Math.min(
-      Math.max(
-        Math.min(pensionMonthlySalary - nonTaxableIncome, 0)
-          * nationalPensionRate
-          * 0.5,
-        maxNationalPensionRate,
-      ),
-      0,
+  console.log('pensionMonthlySalary: ', pensionMonthlySalary);
+  console.log('pensionMonthlySalary: ', Math.max(pensionMonthlySalary - nonTaxableIncome, 0)
+  * nationalPensionRate
+  * 0.5);
+  const nationalPension = Math.min(
+    roundTo(
+      Math.max(pensionMonthlySalary - nonTaxableIncome, 0)
+        * nationalPensionRate
+        * 0.5,
+      -1,
+      'down',
     ),
-  ); // TODO round down
+    maxNationalPensionRate,
+  );
   const taxableIncome = Math.max(monthlyTotalSalary - nonTaxableIncome, 0);
-  const healthInsurance = roundCurrency((taxableIncome) * healthInsuranceRate * 0.5, {}, 'down'); // TODO round down
-  const longTermHealthInsurance = roundCurrency(healthInsurance * longTermHealthInsuranceRate, {}, 'down'); // TODO round down
-  const employmentInsurance = roundCurrency((taxableIncome) * employmentInsuranceRate * 0.5, {}, 'down'); // TODO round down
+  const healthInsurance = roundTo(
+    roundTo(taxableIncome * healthInsuranceRate * 0.5, 2, 'up'),
+    -1,
+    'down',
+  );
 
+  const longTermHealthInsurance = roundTo(
+    roundTo(healthInsurance * longTermHealthInsuranceRate, 2, 'up'),
+    -1,
+    'down',
+  );
+
+  const employmentInsurance = roundTo(
+    roundTo(taxableIncome * employmentInsuranceRate * 0.5, 2, 'up'),
+    -1,
+    'down',
+  );
+  console.log(taxableIncome * employmentInsuranceRate * 0.5);
+  console.log(roundTo(taxableIncome, 2, 'up'));
   return {
     nationalPension,
     healthInsurance,

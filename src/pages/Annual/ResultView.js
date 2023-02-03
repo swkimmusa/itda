@@ -163,6 +163,10 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[
             {
+              label: '통상임금(시)',
+              value: formatCurrency(result.ordinaryHourlySalary),
+            },
+            {
               label: `연장근로 - ${result.overtimeWorkHours}시간`,
               value: formatCurrency(result.overtimeWorkWage),
             },

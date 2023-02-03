@@ -149,10 +149,10 @@ const ResultView = (props) => {
               label: '연장근로수당',
               value: formatCurrency(result.overtimeWage),
             },
-            // {
-            //   label: '월 급여',
-            //   value: result.totalWage,
-            // },
+            {
+              label: '월 급여',
+              value: result.totalWage,
+            },
             {
               label: '고용보험',
               value: formatCurrency(result.employmentInsurance),
@@ -163,7 +163,7 @@ const ResultView = (props) => {
               valueStyle: { fontWeight: 'bold' },
             },
             {
-              label: '월 급여',
+              label: '실수령액',
               value: formatCurrency(result.netWage),
               valueStyle: { fontWeight: 'bold' },
             },
@@ -178,7 +178,7 @@ const ResultView = (props) => {
           info={[
             {
               label: '근무시간',
-              value: result.hoursWorked,
+              value: `${result.hoursWorked}시간`,
             },
             {
               label: '상시 근무인원',
@@ -195,11 +195,11 @@ const ResultView = (props) => {
           info={[
             {
               label: '고용보험',
-              // value: result.employ,
+              value: formatCurrency(result.employmentInsurance),
             },
             {
               label: '상시 근무인원',
-              // value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
+              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
             },
           ]}
         />
@@ -224,7 +224,7 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[{
             label: '총 근무시간',
-            value: result.hoursWorked,
+            value: `${result.hoursWorked}시간`,
           }]}
         />
       </SectionWrapper>

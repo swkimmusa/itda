@@ -157,6 +157,7 @@ const getDefaultInitialValues = () => ({
   type: 'annual',
   conversionType: 'annual',
   name: '',
+  numOfFamily: 1,
 });
 const FormView = (props) => {
   const { calculationList } = props;
@@ -261,7 +262,6 @@ const FormView = (props) => {
           <Step step={1} currentStep={step}>
             <FieldSection>
               <FieldComponent
-                required
                 name="nonTaxableIncome"
                 placeholder={0}
                 label="비과세액을 입력해 주세요"
@@ -279,6 +279,7 @@ const FormView = (props) => {
               <FieldComponent
                 name="numOfFamily"
                 placeholder={0}
+                min={1}
                 label="본인 포함 부양가족 수를 입력해 주세요"
                 type="number"
               />

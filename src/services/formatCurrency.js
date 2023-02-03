@@ -31,8 +31,9 @@ export const formatCurrency = (v, opts = {}) => {
   });
 };
 
-export const roundCurrency = (v = 0, others = {}, roundType = 'up') => {
-  const rounded = roundTo(v, 2, roundType);
+export const roundCurrency = (v = 0, others = {}, roundType = 'up', precision = 2) => {
+  const rounded = roundTo(v, precision, roundType);
+  console.log('rounded: ', rounded);
   return unformat(format(rounded, {
     decimalsDigits: 0,
     ...others,
