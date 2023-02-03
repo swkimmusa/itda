@@ -1,6 +1,6 @@
 import { stringify } from 'qs';
 import {
-  clone, get,
+  clone, get, each, max,
 } from 'lodash';
 import moment from 'moment';
 import {
@@ -18,6 +18,8 @@ const defaultInputValues = {
   daysWorked: null,
 
   contractWeeklyHours: null,
+
+  weeklyHolidays: 0,
 
   overtimeWorkHours: null,
 
@@ -59,50 +61,89 @@ const getHoursWorked = (inputValues) => {
   return hoursPerDay * daysWorked;
 };
 
-const getBaseWage = (inputValues) => {
-  const {
-    hourlyWage,
-    hoursWorked,
-    hoursPerDay,
-  } = inputValues;
-
-  if (hoursWorked) return hourlyWage * hoursWorked;
-
-  return roundCurrency(hourlyWage * hoursPerDay);
-};
-
 const getOvertimeHours = (inputValues) => {
   const {
+    conversionType,
     daysWorked,
     overtimeWorkHours,
     contractWeeklyHours,
-    daysPerWeek,
     hoursPerDay,
     weeklyHours,
     hoursWorked,
   } = inputValues;
   if (overtimeWorkHours) return overtimeWorkHours;
-  console.log(daysWorked);
-  console.log(contractWeeklyHours);
-  console.log(hoursPerDay);
-  console.log(weeklyHours.list.length);
-  console.log(hoursWorked - contractWeeklyHours);
-  if (
-    ((!!hoursPerDay && !!daysWorked) || weeklyHours.list.length > 0)
-    && !!contractWeeklyHours
-  ) return Math.max(hoursWorked - contractWeeklyHours, 0);
+
+  if (contractWeeklyHours) return Math.max(0, hoursWorked - contractWeeklyHours);
+  // const contractWeeklyHoursOvertime = Math.max(0, hoursWorked - contractWeeklyHours);
+
+  // let currentWorkHour = 0;
+  let weeklyHoursOvertime = 0;
+  if (conversionType === 'weekly') {
+    const dailyOvertimeMinutesList = weeklyHours.list.map((range) => {
+      const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
+      return Math.max(0, difference - 480);
+    });
+    const dailyOvertimeMinutes = dailyOvertimeMinutesList.reduce((ac, cu) => ac + cu, 0);
+    const minutesOver40Hours = Math.max(0, (hoursWorked * 60) - 2400);
+    weeklyHoursOvertime = max([
+      // contractWeeklyHoursOvertime,
+      dailyOvertimeMinutes / 60,
+      minutesOver40Hours / 60,
+    ]);
+  }
+  return weeklyHoursOvertime || 0;
+};
+
+const getWeeklyHolidayHours = (inputValues) => {
+  const {
+    hoursWorked,
+    baseWorkHours,
+  } = inputValues;
+
+  if (hoursWorked < 15) return 0;
+
+  if (baseWorkHours) return (baseWorkHours / 5);
 
   return 0;
 };
 
+const getBaseWorkHours = (inputValues) => {
+  const {
+    hoursWorked,
+    overtimeWorkHours,
+    contractWeeklyHours,
+  } = inputValues;
+  // const multiplier
+  // if (contractWeeklyHours) return Math.min(contractWeeklyHours)
+  return hoursWorked - overtimeWorkHours;
+};
+
+const getBaseWage = (inputValues) => {
+  const {
+    baseWorkHours,
+    hourlyWage,
+    hoursWorked,
+    hoursPerDay,
+  } = inputValues;
+
+  return roundCurrency(hourlyWage * baseWorkHours);
+};
+const getWeeklyHolidayWage = (inputValues) => {
+  const {
+    weeklyHolidayHours,
+    hourlyWage,
+  } = inputValues;
+  return roundCurrency(weeklyHolidayHours * hourlyWage);
+};
 const getOvertimeWage = (inputValues) => {
   const {
     overtimeWorkHours,
     hourlyWage,
+    smallBusiness,
   } = inputValues;
 
-  // const multiplier
-  return roundCurrency(1.5 * overtimeWorkHours * hourlyWage);
+  const multiplier = smallBusiness ? 1 : 1.5;
+  return roundCurrency(multiplier * overtimeWorkHours * hourlyWage);
 };
 
 const calculate = (inputValues) => {
@@ -114,12 +155,25 @@ const calculate = (inputValues) => {
   };
   mergedInputValues = {
     ...mergedInputValues,
+    overtimeWorkHours: getOvertimeHours(mergedInputValues),
+  };
+  mergedInputValues = {
+    ...mergedInputValues,
+    baseWorkHours: getBaseWorkHours(mergedInputValues),
+  };
+  mergedInputValues = {
+    ...mergedInputValues,
+    weeklyHolidayHours: getWeeklyHolidayHours(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
     baseWage: getBaseWage(mergedInputValues),
   };
 
   mergedInputValues = {
     ...mergedInputValues,
-    overtimeWorkHours: getOvertimeHours(mergedInputValues),
+    weeklyHolidayWage: getWeeklyHolidayWage(mergedInputValues),
   };
 
   mergedInputValues = {
@@ -129,7 +183,7 @@ const calculate = (inputValues) => {
 
   mergedInputValues = {
     ...mergedInputValues,
-    totalWage: roundCurrency(mergedInputValues.overtimeWage + mergedInputValues.baseWage),
+    totalWage: roundCurrency(mergedInputValues.overtimeWage + mergedInputValues.baseWage + mergedInputValues.weeklyHolidayWage),
   };
 
   mergedInputValues = {

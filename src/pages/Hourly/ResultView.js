@@ -143,6 +143,10 @@ const ResultView = (props) => {
             },
             {
               label: '주휴수당',
+              value: formatCurrency(result.weeklyHolidayWage),
+            },
+            {
+              label: '연장근로수당',
               value: formatCurrency(result.overtimeWage),
             },
             // {

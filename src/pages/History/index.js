@@ -141,7 +141,7 @@ const History = ({
       <SectionContainer>
         <TotalSection>
           <TotalText>
-            전체 {keys.length} 건
+            전체 {filteredKeys.length} 건
           </TotalText>
           <TotalCardSection>
             {filteredKeys.map((k) => {
