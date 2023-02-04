@@ -206,6 +206,8 @@ const FormView = (props) => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values) => {
+          console.log('step: ', step);
+          console.log('step: ', step < 1);
           if (step < 1) return;
           await new Promise((r) => setTimeout(r, 500));
 

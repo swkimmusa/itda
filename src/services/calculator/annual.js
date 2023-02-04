@@ -1,6 +1,9 @@
 import { stringify } from 'qs';
 import {
-  clone, get,
+  clone,
+  get,
+  find,
+  toNumber,
 } from 'lodash';
 import moment from 'moment';
 import {
@@ -9,6 +12,10 @@ import {
 import {
   roundTo, roundCurrency,
 } from '../formatCurrency';
+
+import taxBracket from '../taxBracket.json';
+
+console.log(taxBracket);
 
 export const nationalPensionRate = 0.09;
 export const healthInsuranceRate = 0.0709;
@@ -112,7 +119,6 @@ const getAddedWageGroup = (inputValues) => {
       nightTimeWorkWage: 0,
       holidayWorkWage: 0,
       holidayOvertimeWorkWage: 0,
-
       totalAddedWage: 0,
     };
   }
@@ -142,25 +148,97 @@ const getMonthlyTotalSalary = (inputValues) => {
   return roundCurrency(averageMonthlySalary + totalAddedWage, {}, 'up', 4);
 };
 
+// const
+
+const getTaxableIncome = (inputValues) => {
+  const {
+    monthlyTotalSalary,
+    nonTaxableIncome,
+  } = inputValues;
+
+  const taxableIncome = Math.max(monthlyTotalSalary - nonTaxableIncome, 0);
+  return taxableIncome;
+};
+const getEarnedIncomeTax = (inputValues) => {
+  const {
+    numOfFamily,
+    numOfFamilyUnderAge,
+    pensionMonthlySalary,
+    taxableIncome,
+  } = inputValues;
+  // const taxableIncome =
+  const lowerBracketRows = taxBracket.filter((row) => Number(row['이상']) <= 10000000 && !!row['5']);
+  const upperBracketRows = taxBracket.filter((row) => Number(row['이상']) >= 10000000 && !row['5']);
+  const bracket = find(lowerBracketRows, (row) => {
+    const floor = Number(row['이상']);
+    const roof = Number(row['미만']);
+    const isOver = floor <= taxableIncome;
+    const isLower = roof === 0
+      ? true // top bracket within lower brackets
+      : roof > taxableIncome;
+
+    if (isOver && isLower) {
+      console.log('taxableIncome: ', taxableIncome);
+      console.log('floor: ', floor);
+      console.log('roof: ', roof);
+      console.log('isOver: ', isOver);
+      console.log('isLower: ', isLower);
+    }
+    return isOver && isLower;
+  });
+  console.log('bracket, ', bracket);
+  const totalNumOfFamily = Math.min(numOfFamily + numOfFamilyUnderAge, 11);
+  const lowerBracketTax = Number(bracket[String(totalNumOfFamily)]);
+  const upperBracketTax = upperBracketRows.reduce((ac, row) => { // upper bracket is cummulative
+    const floor = Number(row['이상']);
+    const roof = Number(row['미만']);
+    const isOver = floor <= taxableIncome;
+    const isLower = roof === 0
+      ? true // top bracket within lower brackets
+      : roof > taxableIncome;
+
+    if (!isOver) return 0;
+    if (isOver && !isLower) return Number(row['1']);
+
+    const isTop = roof === 0;
+    const position = taxableIncome - floor;
+    console.log('isTop: ', isTop);
+    console.log('position: ', position);
+    if (isTop) {
+      const topRate = Number(row['1']);
+      console.log('topRate: ', topRate);
+      return position * topRate;
+    }
+
+    const maximumBracketTax = Number(row['1']);
+    const range = roof - floor;
+    const givenTax = maximumBracketTax * (position / range);
+    console.log('maximumBracketTax: ', maximumBracketTax);
+    console.log('range: ', range);
+    console.log('givenTax: ', givenTax);
+    return givenTax;
+  }, 0);
+  console.log('lowerBracketTax: ', lowerBracketTax);
+  console.log('upperBracketTax: ', upperBracketTax);
+
+  const earnedIncomeTax = lowerBracketTax + upperBracketTax;
+  return roundCurrency(earnedIncomeTax);
+};
+
+const getResidentTax = (inputValues) => {
+  const { earnedIncomeTax } = inputValues;
+
+  return roundTo(earnedIncomeTax / 10, -1, 'down');
+};
 const getInsuranceGroup = (inputValues) => {
   const {
     pensionMonthlySalary,
     monthlyTotalSalary,
     nonTaxableIncome,
-    // nationalPension,
-    // healthInsurance,
-    // healthInsuranceRate,
-    // employmentInsurance,
+    taxableIncome,
+    earnedIncomeTax,
+    residentTax,
   } = inputValues;
-  console.log(
-    (pensionMonthlySalary - nonTaxableIncome)
-    * nationalPensionRate
-    * 0.5,
-  );
-  console.log('pensionMonthlySalary: ', pensionMonthlySalary);
-  console.log('pensionMonthlySalary: ', Math.max(pensionMonthlySalary - nonTaxableIncome, 0)
-  * nationalPensionRate
-  * 0.5);
   const nationalPension = Math.min(
     roundTo(
       Math.max(pensionMonthlySalary - nonTaxableIncome, 0)
@@ -171,7 +249,6 @@ const getInsuranceGroup = (inputValues) => {
     ),
     maxNationalPensionRate,
   );
-  const taxableIncome = Math.max(monthlyTotalSalary - nonTaxableIncome, 0);
   const healthInsurance = roundTo(
     roundTo(taxableIncome * healthInsuranceRate * 0.5, 2, 'up'),
     -1,
@@ -196,7 +273,12 @@ const getInsuranceGroup = (inputValues) => {
     healthInsurance,
     longTermHealthInsurance,
     employmentInsurance,
-    totalInsurance: nationalPension + healthInsurance + longTermHealthInsurance + employmentInsurance,
+    totalInsurance: nationalPension
+      + healthInsurance
+      + longTermHealthInsurance
+      + employmentInsurance
+      + earnedIncomeTax
+      + residentTax,
   };
 };
 
@@ -239,6 +321,21 @@ const calculate = (inputValues) => {
   mergedInputValues = {
     ...mergedInputValues,
     monthlyTotalSalary: getMonthlyTotalSalary(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    taxableIncome: getTaxableIncome(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    earnedIncomeTax: getEarnedIncomeTax(mergedInputValues),
+  };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    residentTax: getResidentTax(mergedInputValues),
   };
 
   mergedInputValues = {

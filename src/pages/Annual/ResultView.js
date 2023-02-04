@@ -218,6 +218,14 @@ const ResultView = (props) => {
               value: formatCurrency(result.employmentInsurance),
             },
             {
+              label: '근로소득세',
+              value: formatCurrency(result.earnedIncomeTax),
+            },
+            {
+              label: '주민세',
+              value: formatCurrency(result.residentTax),
+            },
+            {
               label: '공제액 합계',
               value: formatCurrency(
                 result.nationalPension

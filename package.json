@@ -57,14 +57,11 @@
     "storybook": "start-storybook -p 6006 -s public",
     "storybook:clear-cache": "start-storybook --no-manager-cache",
     "build-storybook": "build-storybook -s public",
-
     "predeploy:page": "npm run build:page",
     "deploy:page": "gh-pages -d build",
-
     "predeploy:staging": "REACT_APP_STAGE=staging npm run build",
     "deploy:staging": "aws s3 sync build/ s3://itda-app-staging --profile itda",
     "postdeploy:staging": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda",
-
     "predeploy": "REACT_APP_STAGE=production npm run build",
     "deploy": "aws s3 sync build/ s3://itda-app-production --profile itda",
     "postdeploy": "aws cloudfront create-invalidation --distribution-id E3SDRUWBXMBQZN --paths '/*' --profile itda"
@@ -93,6 +90,7 @@
     "@storybook/react": "6.5.9",
     "@storybook/testing-library": "0.0.13",
     "babel-plugin-named-exports-order": "0.0.2",
+    "csvtojson": "2.0.10",
     "eslint": "8.18.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-destructuring-newline": "0.0.2",
