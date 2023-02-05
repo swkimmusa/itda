@@ -73,7 +73,7 @@ const getJoinDateBasedLeaves = (inputValues) => {
 
     const leaveObj = {
       date: date.toISOString(),
-      leave: 15 + roundTo(yearsAfterFirst / 2, 0, 'down'),
+      leave: Math.max(15 + roundTo(yearsAfterFirst / 2, 0, 'down'), 25),
     };
     leaves.push(leaveObj);
   });
@@ -136,7 +136,7 @@ const getAccountingDateBasedLeaves = (inputValues) => {
 
     const leaveObj = {
       date: date.toISOString(),
-      leave: 15 + roundTo(yearsAfterSecondJanFirst / 2, 0, 'down'),
+      leave: Math.max(15 + roundTo(yearsAfterSecondJanFirst / 2, 0, 'down'), 25),
     };
     leaves.push(leaveObj);
   });
