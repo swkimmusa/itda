@@ -166,7 +166,7 @@ const ResultView = (props) => {
           }) => {
             return {
               label: moment(date).format('YYYY-MMMM-Do'),
-              value: ordinarySalary,
+              value: formatCurrency(ordinarySalary),
             };
           })}
         />
@@ -177,11 +177,26 @@ const ResultView = (props) => {
           info={[
             {
               label: '상여금',
-              value: result.annualBonusSeverance,
+              value: formatCurrency(result.annualBonusSeverance),
             },
             {
               label: '연차수당',
-              value: result.annualTotalAddedWageSeverance,
+              value: formatCurrency(result.annualTotalAddedWageSeverance),
+            },
+          ]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <Heading level={3} palette="black">퇴직금</Heading>
+        <StyledInfoCard
+          info={[
+            {
+              label: '평균임금(1일)',
+              value: formatCurrency(result.averageDailyTotalSalary),
+            },
+            {
+              label: '예상 퇴직금',
+              value: formatCurrency(result.totalSeverance),
             },
           ]}
         />

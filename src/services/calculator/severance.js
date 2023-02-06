@@ -34,18 +34,18 @@ const getOrdinaryMonthlySalary = (inputValues) => {
     monthlySalary,
   } = inputValues;
 
-  const workDays = moment(leaveDate).diff(joinDate, 'days') + 1;
+  const workDaysTotal = moment(leaveDate).diff(joinDate, 'days') + 1;
 
-  const ordinaryDailySalaryList = [];
+  const ordinaryMonthlySalaryList = [];
 
-  if (workDays < 365) return ordinaryDailySalaryList; // 1년 미만 재직은 퇴직금 발생하지 않음
+  if (workDaysTotal < 365) return ordinaryMonthlySalaryList; // 1년 미만 재직은 퇴직금 발생하지 않음
 
   const startDate = moment(leaveDate).startOf('day').subtract('3', 'months').add(1, 'days');
 
   // startingMonth
   const startMonthWorkDays = startDate.daysInMonth() - (startDate.date() - 1);
   const startMonthOrdinaryDailySalary = (monthlySalary / startDate.daysInMonth());
-  ordinaryDailySalaryList.push({
+  ordinaryMonthlySalaryList.push({
     date: startDate.toISOString(),
     ordinarySalary: startMonthOrdinaryDailySalary * startMonthWorkDays,
   });
@@ -55,7 +55,7 @@ const getOrdinaryMonthlySalary = (inputValues) => {
     const monthsAfterStartDate = i + 1;
     const currentMonth = moment(startDate).startOf('month').month() + monthsAfterStartDate; // 0 = jan
     const currentStartDate = moment(startDate).month(currentMonth).startOf('month');
-    ordinaryDailySalaryList.push({
+    ordinaryMonthlySalaryList.push({
       date: currentStartDate.toISOString(),
       ordinarySalary: monthlySalary,
     });
@@ -65,12 +65,50 @@ const getOrdinaryMonthlySalary = (inputValues) => {
   const lastDate = moment(leaveDate).startOf('day');
   const lastMonthWorkDays = lastDate.date();
   const lastMonthOrdinaryDailySalary = (monthlySalary / lastDate.daysInMonth());
-  ordinaryDailySalaryList.push({
+  ordinaryMonthlySalaryList.push({
     date: moment(leaveDate).startOf('month').toISOString(),
     ordinarySalary: lastMonthOrdinaryDailySalary * lastMonthWorkDays,
   });
 
-  return ordinaryDailySalaryList;
+  const workDays = moment(leaveDate).diff(startDate, 'days') + 1;
+
+  return {
+    ordinaryMonthlySalaryList,
+    workDays,
+    workDaysTotal,
+  };
+};
+
+const getAverageDailyTotalSalary = (inputValues) => {
+  const {
+    workDaysTotal,
+    workDays,
+    joinDate,
+    leaveDate,
+    monthlySalary,
+    ordinaryMonthlySalaryList,
+  } = inputValues;
+
+  // mergedInputValues = {
+  //   ...mergedInputValues,
+  //   ordinaryMonthlySalaryList: getOrdinaryMonthlySalary(mergedInputValues),
+  // };
+  const baseSalarySum = ordinaryMonthlySalaryList.reduce((ac, cu) => ac + cu.ordinarySalary, 0);
+
+  const annualBonusSeverance = inputValues.annualBonus / 4;
+  const annualTotalAddedWageSeverance = inputValues.annualTotalAddedWage / 4;
+  const totalSalary = baseSalarySum + annualBonusSeverance + annualTotalAddedWageSeverance;
+
+  const averageDailyTotalSalary = totalSalary / workDays;
+
+  const totalSeverance = ((averageDailyTotalSalary * 30) / 365) * workDaysTotal;
+  return {
+    totalSalary,
+    averageDailyTotalSalary,
+    totalSeverance,
+    annualBonusSeverance: inputValues.annualBonus / 4,
+    annualTotalAddedWageSeverance: inputValues.annualTotalAddedWage / 4,
+  };
 };
 
 const calculate = (inputValues) => {
@@ -78,7 +116,17 @@ const calculate = (inputValues) => {
 
   mergedInputValues = {
     ...mergedInputValues,
-    ordinaryMonthlySalaryList: getOrdinaryMonthlySalary(mergedInputValues),
+    ...getOrdinaryMonthlySalary(mergedInputValues),
+  };
+
+  // mergedInputValues = {
+  //   ...mergedInputValues,
+  //   adjustedT: getOrdinaryMonthlySalary(mergedInputValues),
+  // };
+
+  mergedInputValues = {
+    ...mergedInputValues,
+    ...getAverageDailyTotalSalary(mergedInputValues),
   };
 
   mergedInputValues = {
