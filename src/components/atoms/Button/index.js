@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import {
   palette, font,
 } from 'styled-theme';
@@ -9,6 +9,7 @@ import {
   ifProp, switchProp, prop,
 } from 'styled-tools';
 import Spinner from '../Spinner';
+import Link from '../Link';
 
 const backgroundColor = ({
   disabled,

@@ -16,10 +16,14 @@ const styles = css`
 
   &:hover,
   &:focus {
-    text-decoration: ${ifProp([
-    { disabled: true },
-    { disableStyle: true },
-  ], 'none', 'underline')};
+    text-decoration: ${ifProp(
+    [
+      { disabled: true },
+      { disableStyle: true },
+    ],
+    'none',
+    'none',
+  )};
   }
 `;
 
