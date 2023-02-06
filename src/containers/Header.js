@@ -69,8 +69,6 @@ const StyledText = styled(Text)`
 `;
 
 const LeftMenuButtonContainer = styled(Flex)`
-  display: none;
-
   @media (max-width: ${size('mobileBreakpoint')}) {
     display: flex;
     flex-direction: row;

@@ -14,19 +14,23 @@ theme.palette = {
     '#fff',
     '#f6f9fc',
   ],
-  black: ['#000000'],
+  black: [
+    '#000000',
+    '#2B2B2B',
+  ],
   grayscale: [
     '#797979',
     '#CCCCCC',
-    '#FAFAFB',
+    '#F7F7F7', // FAFAFB
     '#E6E5EA',
   ],
   red: ['#47000a'],
   yellow: ['#a16600'],
-  green: ['#0d200e'],
+  green: ['#BBFD12'],
   blue: [
     '#072E4B',
     '#F6F5FD',
+    '#F4F4F7',
   ],
 };
 

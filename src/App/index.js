@@ -80,6 +80,7 @@ const Wrapper = styled(Flex)`
   box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 4px;
   height: 100%;
   overflow: auto;
+  background-color: ${palette('white', 0)};
 `;
 
 const PageWrapper = styled.div`

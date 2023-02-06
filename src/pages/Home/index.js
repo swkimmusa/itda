@@ -28,7 +28,7 @@ import { hourlyCalc } from '../../services/calculator';
 const Wrapper = styled(Flex)`
   flex: 1;
   flex-direction: column;
-  background-color: ${palette('blue', 1)}
+  background-color: ${palette('blue', 2)};
 `;
 
 const SectionContainer = styled(Flex)`
@@ -158,15 +158,20 @@ const Home = ({
           {keys.map((k) => {
             const currentCalculation = hourlyCalc(calculationList[k]);
             const { result } = currentCalculation;
+            console.log(result);
+            console.log(currentCalculation);
             return (
               <StyledCalcSummHeader
                 key={k}
+                summarised
                 white
                 title={result.name}
                 hourly={result.hourlyWage}
                 type={result.conversionType}
                 beforeTax={result.totalWage}
                 afterTax={result.netWage}
+                category={result.conversionType}
+                updatedAt={result.updatedAt}
                 // beforeTax: 321000,
                 // afterTax: 321000,
                 // date: moment().toISOString(),
