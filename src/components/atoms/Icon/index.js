@@ -1,20 +1,19 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { palette } from 'styled-theme';
 import { ifProp } from 'styled-tools';
 
-import { ReactComponent as LoaderIcon } from './icons/loader.svg';
-import { ReactComponent as LogoIcon } from './icons/logo.svg';
-import { ReactComponent as CaretIcon } from './icons/caret.svg';
-import { ReactComponent as XIcon } from './icons/x.svg';
-import { ReactComponent as CalcIcon } from './icons/calc.svg';
-import { ReactComponent as CalendarIcon } from './icons/calendar.svg';
-import { ReactComponent as YearlyIcon } from './icons/yearly.svg';
-import { ReactComponent as HourlyIcon } from './icons/hourly.svg';
-import { ReactComponent as EditIcon } from './icons/edit.svg';
-import { ReactComponent as DeleteIcon } from './icons/delete.svg';
-import { ReactComponent as LMIcon } from './icons/left-menu-icon.svg';
+import { ReactComponent as LoaderIcon } from './icons-o/loader.svg';
+import { ReactComponent as LogoIcon } from './icons-o/logo.svg';
+import { ReactComponent as CaretIcon } from './icons-o/caret.svg';
+import { ReactComponent as XIcon } from './icons-o/x.svg';
+import { ReactComponent as CalcIcon } from './icons-o/calc.svg';
+import { ReactComponent as CalendarIcon } from './icons-o/calendar.svg';
+import { ReactComponent as YearlyIcon } from './icons-o/yearly.svg';
+import { ReactComponent as HourlyIcon } from './icons-o/hourly.svg';
+import { ReactComponent as EditIcon } from './icons-o/edit.svg';
+import { ReactComponent as DeleteIcon } from './icons-o/delete.svg';
+import { ReactComponent as LMIcon } from './icons-o/left-menu-icon.svg';
 
 const ReactIcons = {
   loader: LoaderIcon,

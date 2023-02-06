@@ -57,6 +57,7 @@
     "storybook": "start-storybook -p 6006 -s public",
     "storybook:clear-cache": "start-storybook --no-manager-cache",
     "build-storybook": "build-storybook -s public",
+    "svg": "svgo --folder ./src/components/atoms/Icon/icons -o ./src/components/atoms/Icon/icons-o",
     "predeploy:page": "npm run build:page",
     "deploy:page": "gh-pages -d build",
     "predeploy:staging": "REACT_APP_STAGE=staging npm run build",
@@ -96,7 +97,8 @@
     "eslint-plugin-destructuring-newline": "0.0.2",
     "gh-pages": "4.0.0",
     "sass": "1.53.0",
-    "storybook-addon-styled-component-theme": "2.0.0"
+    "storybook-addon-styled-component-theme": "2.0.0",
+    "svgo": "3.0.2"
   },
   "eslintConfig": {
     "overrides": [
