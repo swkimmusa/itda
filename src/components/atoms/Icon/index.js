@@ -14,6 +14,7 @@ import { ReactComponent as YearlyIcon } from './icons/yearly.svg';
 import { ReactComponent as HourlyIcon } from './icons/hourly.svg';
 import { ReactComponent as EditIcon } from './icons/edit.svg';
 import { ReactComponent as DeleteIcon } from './icons/delete.svg';
+import { ReactComponent as LMIcon } from './icons/left-menu-icon.svg';
 
 const ReactIcons = {
   loader: LoaderIcon,
@@ -26,6 +27,7 @@ const ReactIcons = {
   hourly: HourlyIcon,
   edit: EditIcon,
   delete: DeleteIcon,
+  leftMenuIcon: LMIcon,
 };
 
 const fillStyle = css`
@@ -140,7 +142,13 @@ const Icon = ({
   ...props
 }) => {
   const ReactIcon = ReactIcons[icon];
-  return <Wrapper {...props}>{ReactIcon && <ReactIcon />}</Wrapper>;
+  return (
+    <Wrapper {...props}>
+      {ReactIcon ? (
+        <ReactIcon />
+      ) : null}
+    </Wrapper>
+  );
 };
 
 Icon.propTypes = {

@@ -1,14 +1,14 @@
-<svg id="icon_filled_editor_delete" data-name="icon/filled/editor/delete" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+<svg data-name="icon/filled/editor/delete" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
   <defs>
-    <clipPath id="clip-path">
-      <rect id="icon_filled_editor_delete_clip_mask_" data-name="icon/filled/editor/delete (clip mask)" width="24" height="24" fill="none"/>
+    <clipPath>
+      <rect data-name="icon/filled/editor/delete (clip mask)" width="24" height="24" fill="none"/>
     </clipPath>
   </defs>
-  <rect id="icon_filled_editor_delete_clip_mask_2" data-name="icon/filled/editor/delete (clip mask)" width="24" height="24" fill="none"/>
-  <g id="icon_filled_editor_delete-2" data-name="icon/filled/editor/delete" clip-path="url(#clip-path)">
-    <g id="icon_filled_editor_delete_clip_group_" data-name="icon/filled/editor/delete (clip group)">
-      <rect id="icon_filled_editor_delete_style_" data-name="icon/filled/editor/delete (style)" width="24" height="24" fill="none"/>
-      <path id="Vector" d="M14.32,18.75H3.68a1.5,1.5,0,0,1-1.5-1.429L1.6,5.063H.187A.187.187,0,0,1,0,4.875V4.125a.751.751,0,0,1,.75-.75h3V1.5A1.5,1.5,0,0,1,5.25,0h7.5a1.5,1.5,0,0,1,1.5,1.5V3.375h3a.751.751,0,0,1,.75.75v.751a.187.187,0,0,1-.187.187H16.4L15.818,17.32A1.5,1.5,0,0,1,14.32,18.75ZM5.438,1.687V3.375h7.124V1.687Z" transform="translate(3 2.625)"/>
+  <rect data-name="icon/filled/editor/delete (clip mask)" width="24" height="24" fill="none"/>
+  <g data-name="icon/filled/editor/delete" clip-path="url(#clip-path)">
+    <g data-name="icon/filled/editor/delete (clip group)">
+      <rect data-name="icon/filled/editor/delete (style)" width="24" height="24" fill="none"/>
+      <path d="M14.32,18.75H3.68a1.5,1.5,0,0,1-1.5-1.429L1.6,5.063H.187A.187.187,0,0,1,0,4.875V4.125a.751.751,0,0,1,.75-.75h3V1.5A1.5,1.5,0,0,1,5.25,0h7.5a1.5,1.5,0,0,1,1.5,1.5V3.375h3a.751.751,0,0,1,.75.75v.751a.187.187,0,0,1-.187.187H16.4L15.818,17.32A1.5,1.5,0,0,1,14.32,18.75ZM5.438,1.687V3.375h7.124V1.687Z" transform="translate(3 2.625)"/>
     </g>
   </g>
 </svg>

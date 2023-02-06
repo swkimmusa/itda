@@ -6,6 +6,7 @@ import { ifProp } from 'styled-tools';
 import * as serviceWorkerRegistration from '../../../serviceWorkerRegistration';
 
 import Link from '../../atoms/Link';
+import Icon from '../../atoms/Icon';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -13,11 +14,12 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: ${(props) => (`${props.width}px`)};
-  background-color: ${palette('white', 0)};
+  background-color: ${palette('black', 0)};
   /* background-color: #37C5B9; */
   align-items: center;
   overflow-y: auto;
-  border-right: 1px solid #ECECEC;
+  border-right: 1px solid;
+  border-radius: 12px;
   z-index: 2;
 `;
 
@@ -38,6 +40,9 @@ const MenuWrapper = styled.div`
   li {
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
   }
 `;
 const LogoWrapper = styled(Link)`
@@ -50,17 +55,24 @@ const LogoWrapper = styled(Link)`
 
 const MenuLink = styled(Link)`
   display: flex;
+  border-radius: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600; // semi-bold
   padding: 16px 0;
-  color: ${palette('black', 0)};;
-  padding: 25px 35px;
+  align-items: center;
+  color: ${palette('white', 0)};
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 8px 10px;
   border-left: 4px solid transparent;
 
   &.current-link,
   &:hover,
   &:focus {
-    color: ${palette('black', 0)};;
-    background-color: #E9F4F5;
-    border-left: 4px solid ${palette('primary', 0)};
+    background-color: ${palette('black', 1)};
     text-decoration: none;
   }
 `;
@@ -88,24 +100,28 @@ const LeftMenu = ({
               }}
               label={link.label}
             >
+              <Icon icon="leftMenuIcon" height={24} style={{ marginRight: 10 }} />
               {startCase(link.label)}
             </MenuLink>
           </li>
         ))}
       </ul>
-      <MenuLink
-        to="/"
-        onClick={() => {
-          onClose();
-          serviceWorkerRegistration.unregister()
-            .then((unregResult) => {
-              console.log(unregResult);
-              // You can check if successful with Promise result 'unregResult'
-              window.location.reload();
-            });
-        }}
-      >Log Out
-      </MenuLink>
+      <div>
+        <MenuLink
+          to="/"
+          onClick={() => {
+            onClose();
+            serviceWorkerRegistration.unregister()
+              .then((unregResult) => {
+                console.log(unregResult);
+                // You can check if successful with Promise result 'unregResult'
+                window.location.reload();
+              });
+          }}
+        >Log Out
+        </MenuLink>
+      </div>
+
     </MenuWrapper>
   </Wrapper>
 );

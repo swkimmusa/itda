@@ -10,6 +10,7 @@ import Card from '../../atoms/Card';
 import P from '../../atoms/P';
 import Flex from '../../atoms/Flex';
 import Icon from '../../atoms/Icon';
+import TypeLabel from '../TypeLabel';
 
 const StyledCard = styled(Card)`
   padding: 20px;
@@ -40,6 +41,11 @@ const ValP = styled(P)`
   margin-right: 10px;
   white-space: nowrap;
 `;
+const SummHeaderContainer = styled(Flex)`
+  margin-bottom: 15px;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 const CalcSummHeader = ({
   title,
   hourly,
@@ -47,7 +53,10 @@ const CalcSummHeader = ({
   beforeTax,
   afterTax,
   date,
+  summarised,
+  category,
   white,
+  updatedAt,
   onDelete,
   ...props
 }) => {
@@ -56,6 +65,12 @@ const CalcSummHeader = ({
       {...props}
       white={white}
     >
+      {summarised ? (
+        <SummHeaderContainer>
+          <TypeLabel>{category}</TypeLabel>
+          <P>{moment(updatedAt).format('YYYY.MM.DD')}</P>
+        </SummHeaderContainer>
+      ) : null}
       <TitleRow>
         <Title>
           {title}
@@ -91,6 +106,8 @@ CalcSummHeader.propTypes = {
   beforeTax: PropTypes.number,
   afterTax: PropTypes.number,
   date: PropTypes.string, // ISO string
+  summarised: PropTypes.bool,
+  category: PropTypes.string,
 };
 
 CalcSummHeader.defaultProps = {
@@ -100,6 +117,8 @@ CalcSummHeader.defaultProps = {
   beforeTax: 321000,
   afterTax: 321000,
   date: moment().toISOString(),
+  summarised: false,
+  category: 'cat',
 };
 
 export default CalcSummHeader;
