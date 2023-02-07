@@ -10,7 +10,7 @@ import {
 } from 'styled-theme';
 import { ifProp } from 'styled-tools';
 import {
-  Formik, Form, useField, useFormikContext,
+  Formik, Form, useField, useFormikContext, Field,
 } from 'formik';
 
 import {
@@ -24,7 +24,6 @@ import Flex from '../../components/atoms/Flex';
 import Button from '../../components/atoms/Button';
 import Text from '../../components/atoms/P';
 import Input from '../../components/molecules/Input';
-import IconText from '../../components/molecules/IconText';
 import InlineModal from '../../components/molecules/InLineModal';
 
 import ProgressBar from '../../components/molecules/ProgressBar';
@@ -42,38 +41,11 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const SectionWrapper = styled(Flex)`
-  padding: 15px;
-  flex-direction: column;
-`;
-
-const FieldFlex = styled(Flex)`
-  align-items: center;
-  @media (max-width: ${size('mobileBreakpoint')}){
-    flex-direction: column;
-    align-items: flex-start;
-    padding-top: 5px;
-  }
-`;
 const FieldSection = styled(Flex)`
   flex-direction: column;
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
-`;
-
-const StyledText = styled.div`
-  padding: 10px 15px 22px 0px;
-  width: 200px;
-  text-align: right;
-  font-family: ${font('tertiary')};
-  font-weight: bold;
-
-  @media (max-width: ${size('mobileBreakpoint')}){
-    text-align: left;
-    padding: 0px;
-    width: auto;
-  }
 `;
 
 const StyledInput = styled(Input)`
@@ -83,10 +55,10 @@ const StyledInput = styled(Input)`
 `;
 
 const FieldComponent = (props) => {
-  const {
-    values,
-    setFieldValue,
-  } = useFormikContext();
+  // const {
+  //   values,
+  //   setFieldValue,
+  // } = useFormikContext();
   const [
     field,
     meta,
@@ -96,32 +68,37 @@ const FieldComponent = (props) => {
   const { setValue } = helpers;
   const {
     mapInputValuesToProps,
+    mapFieldPropsToInputProps,
     InputComponent = StyledInput,
     ...otherProps
   } = props;
-  console.log(field);
 
-  const isCustomInput = InputComponent !== StyledInput;
+  // const isCustomInput = InputComponent !== StyledInput;
 
-  const mappedProps = mapInputValuesToProps(values);
-  console.log('field: ', field);
-
+  const mappedProps = {
+    ...mapFieldPropsToInputProps({
+      field,
+      meta,
+      helpers,
+    }),
+  };
   return (
     <InputComponent
       {...otherProps}
-      {...mappedProps}
       {...field}
+      {...mappedProps}
       metaValue={value}
       setMetaValue={setValue}
-      {...(isCustomInput ? {
-        value,
-        onChange: setValue,
-      } : {})}
+      fieldValue={field.value}
+      setFieldValue={field.onChange}
     />
   );
 };
 
-FieldComponent.defaultProps = { mapInputValuesToProps: (v) => console.log('FieldComponent mapInputValuesToProps() ', v) };
+FieldComponent.defaultProps = {
+  mapInputValuesToProps: (v) => v,
+  mapFieldPropsToInputProps: (v) => v,
+};
 
 const Step = ({
   step,
@@ -280,7 +257,7 @@ const FormView = (props) => {
                 name="hourlyWage"
                 placeholder={9160}
                 label="시급을 입력해 주세요."
-                type="number"
+                type="won"
               />
             </FieldSection>
           </Step>
@@ -289,6 +266,13 @@ const FormView = (props) => {
               <FieldComponent
                 name="weeklyHours"
                 InputComponent={WeeklyHoursSelect}
+                mapFieldPropsToInputProps={({
+                  meta,
+                  helpers,
+                }) => ({
+                  onChange: helpers.setValue,
+                  value: meta.value,
+                })}
                 startDayIndex={0}
               />
             </FieldSection>
@@ -304,7 +288,6 @@ const FormView = (props) => {
               <InlineModal showOnce>근로계약서상 명시한 근로시간이 1주 15시간 미만 -> 주휴수당 미발생, 국민연금/건강보험 적용제외, 주휴수당 등을 적용하고 싶지 않은 경우, 아래 2가지 사유에 해당하는 경우 "X"로 입력하고 계산하도록 안내</InlineModal>
             </FieldSection>
           </Step>
-
           <PageAction actions={[]}>
             <StyledButton transparent label="이전" onClick={prev} hidden={step === 0} style={{ marginBottom: 12 }} />
             <StyledButton label="다음" onClick={next} hidden={step >= 2} />

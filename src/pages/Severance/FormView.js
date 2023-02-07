@@ -249,7 +249,7 @@ const FormView = (props) => {
               <FieldComponent
                 required
                 name="monthlySalary"
-                type="number"
+                type="won"
                 label="월급을 입력해 주세요."
               />
             </FieldSection>

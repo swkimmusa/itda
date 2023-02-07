@@ -9,6 +9,7 @@ import BaseInput, { styles } from './BaseInput';
 import Flex from '../../atoms/Flex';
 import ButtonRadio from '../ButtonRadio';
 import Text from '../../atoms/P';
+import CurrencyInput from '../CurrencyInput';
 
 const borderColor = ({
   disabled,
@@ -163,6 +164,25 @@ const Input = ({ ...props }) => {
           {...props}
           onSelect={(v) => props.setMetaValue(v)}
           selected={props.metaValue}
+        />
+      </Wrapper>
+    );
+  }
+
+  if (type === 'won') {
+    return (
+      <Wrapper {...props}>
+        {label ? (
+          <LabelWrapper>
+            <Label>
+              {label}
+            </Label>
+            {!required && <RequiredText>(선택)</RequiredText>}
+          </LabelWrapper>
+        ) : null}
+        <CurrencyInput
+          {...props}
+          type="number"
         />
       </Wrapper>
     );

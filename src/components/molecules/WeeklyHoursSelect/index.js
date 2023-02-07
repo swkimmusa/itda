@@ -131,6 +131,12 @@ const WeeklyHours = ({
                     moment(formattedBaseDate).day(valueIndex).add(newMinutes, 'minutes').toISOString(),
                   ];
                   newList[valueIndex] = newValue;
+                  console.log({
+                    baseDate: formattedBaseDate,
+                    list: newList,
+                  });
+                  console.log(onChange);
+                  console.log(props);
                   onChange({
                     baseDate: formattedBaseDate,
                     list: newList,

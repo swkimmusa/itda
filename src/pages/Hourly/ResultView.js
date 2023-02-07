@@ -178,7 +178,7 @@ const ResultView = (props) => {
           info={[
             {
               label: '근무시간',
-              value: `${result.hoursWorked}시간`,
+              value: `${Math.floor(result.hoursWorked)}시간 ${(Math.ceil(result.hoursWorked * 60)) % 60}분`,
             },
             {
               label: '상시 근무인원',
@@ -224,7 +224,7 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[{
             label: '총 근무시간',
-            value: `${result.hoursWorked}시간`,
+            value: `${Math.floor(result.hoursWorked)}시간 ${(Math.ceil(result.hoursWorked * 60)) % 60}분`,
           }]}
         />
       </SectionWrapper>

@@ -257,7 +257,7 @@ const FormView = (props) => {
             <FieldSection>
               <FieldComponent
                 name="salary"
-                type="number"
+                type="won"
               />
             </FieldSection>
           </Step>
