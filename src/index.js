@@ -12,6 +12,8 @@ import reportWebVitals from './reportWebVitals';
 
 import GlobalStyled from './globalStyles';
 
+import './index.scss';
+
 import App from './App';
 import { apiUrl } from './config';
 
