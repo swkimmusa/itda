@@ -35,7 +35,7 @@ const Content = styled(Flex)`
 const CaretContainer = styled(Flex)`
   position: absolute;
   bottom: 100%;
-  margin-bottom: -1px;
+  margin-bottom: -2px;
 `;
 
 const CloseButton = styled(Button)`
