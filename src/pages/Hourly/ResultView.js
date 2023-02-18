@@ -4,6 +4,7 @@ import {
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
+import moment from 'moment';
 import {
   size, palette, font,
 } from 'styled-theme';
@@ -25,6 +26,7 @@ import PageAction from '../../components/organisms/PageAction';
 import InfoCard from '../../components/molecules/InfoCard';
 import { hourlyCalc } from '../../services/calculator';
 import calcActions from '../../store/calculation/actions';
+import WeeklyHours from '../../components/molecules/WeeklyHoursSelect/index';
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
@@ -50,6 +52,10 @@ const Section = styled(Flex)`
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
+`;
+
+const NoWrapSpan = styled.span`
+  white-space: nowrap;
 `;
 
 const CardHeaderContainer = styled(Flex)`
@@ -107,7 +113,13 @@ const ResultView = (props) => {
   const currentCalculation = hourlyCalc(currentInputValues);
   const { result } = currentCalculation;
   const isEdit = !!id;
-  console.log(result);
+  const {
+    conversionType,
+    weeklyHours,
+    monthlyHours,
+  } = result;
+  const baseDate = conversionType === 'monthly' ? monthlyHours.baseDate : weeklyHours.baseDate;
+
   return (
     <Wrapper>
       <SectionWrapper>
@@ -122,19 +134,52 @@ const ResultView = (props) => {
           >
             {currentInputValues.name}
           </StyledIconText>
-          <span>의 예상 실수령액은</span>
-          &nbsp;
-          <HeaderValue>
-            {formatCurrency(result.netWage)}
-          </HeaderValue>
-          &nbsp;
-          <span>
-            입니다
-          </span>
+          <span>의 {moment(baseDate).format('YYYY-MM')}의 </span>
+          <NoWrapSpan>세전금액은 {formatCurrency(result.totalWage)}</NoWrapSpan>
+          {' '}
+          <NoWrapSpan>예상 실수령액은 <HeaderValue>{formatCurrency(result.netWage)}</HeaderValue></NoWrapSpan>
+          <span>입니다</span>
         </HeaderContainer>
       </SectionWrapper>
       <SectionWrapper>
-        <Heading level={3} palette="black">상세 정보</Heading>
+        <Heading level={3} palette="black">입력 정보</Heading>
+        <StyledInfoCard
+          info={[
+            {
+              label: '이름',
+              value: result.name,
+            },
+            {
+              label: '상시근로자수',
+              value: result.smallBusiness ? '상시 5인 미만' : '상시 5인 근로',
+            },
+            {
+              label: '환산기준',
+              value: result.conversionType === 'weekly' ? '일/주급' : '월급',
+            },
+            {
+              label: '시급',
+              value: formatCurrency(result.hourlyWage),
+            },
+            {
+              label: '근로계약서상 1주 근로시간',
+              value: result.contractWeeklyHours ? `${result.contractWeeklyHours}시간` : `미입력(${0}시간)`,
+            },
+            {
+              label: '공제액 합계',
+              value: formatCurrency(result.employmentInsurance),
+              valueStyle: { fontWeight: 'bold' },
+            },
+            {
+              label: '실수령액',
+              value: formatCurrency(result.netWage),
+              valueStyle: { fontWeight: 'bold' },
+            },
+          ]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <Heading level={3} palette="black">세전 급여</Heading>
         <StyledInfoCard
           info={[
             {
@@ -151,23 +196,27 @@ const ResultView = (props) => {
             },
             {
               label: '월 급여',
-              value: result.totalWage,
-            },
-            {
-              label: '고용보험',
-              value: formatCurrency(result.employmentInsurance),
-            },
-            {
-              label: '공제액 합계',
-              value: formatCurrency(result.employmentInsurance),
-              valueStyle: { fontWeight: 'bold' },
-            },
-            {
-              label: '실수령액',
-              value: formatCurrency(result.netWage),
-              valueStyle: { fontWeight: 'bold' },
+              value: formatCurrency(result.totalWage),
             },
           ]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <Heading level={3} palette="black">공제 정보</Heading>
+        <StyledInfoCard
+          info={[{
+            label: '고용보험(0.9%)',
+            value: formatCurrency(result.employmentInsurance),
+          }]}
+        />
+      </SectionWrapper>
+      <SectionWrapper>
+        <Heading level={3} palette="black">실수령액</Heading>
+        <StyledInfoCard
+          info={[{
+            label: '실수령액',
+            value: formatCurrency(result.netWage),
+          }]}
         />
       </SectionWrapper>
       <SectionWrapper>
@@ -177,59 +226,26 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[
             {
-              label: '근무시간',
+              label: '총 근무시간',
               value: `${Math.floor(result.hoursWorked)}시간 ${(Math.ceil(result.hoursWorked * 60)) % 60}분`,
             },
             {
-              label: '상시 근무인원',
-              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
+              label: '소정근로시간',
+              value: `${result.contractWeeklyHours || 0}시간`,
+            },
+            {
+              label: '주휴시간',
+              value: `${result.weeklyHolidayHours}시간`,
+            },
+            {
+              label: '연장근로시간',
+              value: `${result.overtimeWorkHours}시간`,
             },
           ]}
-        />
-      </SectionWrapper>
-      <SectionWrapper>
-        <CardHeaderContainer>
-          <Heading level={3} palette="black">공제정보</Heading>
-        </CardHeaderContainer>
-        <StyledInfoCard
-          info={[
-            {
-              label: '고용보험',
-              value: formatCurrency(result.employmentInsurance),
-            },
-            {
-              label: '상시 근무인원',
-              value: result.smallBusiness ? '5인 미만' : '5인 이상', // 5인 이상 , 5인 미만
-            },
-          ]}
-        />
-      </SectionWrapper>
-      <SectionWrapper>
-        <Heading level={3} palette="black">급여 정보</Heading>
-        <StyledInfoCard
-          info={[
-            {
-              label: '환산기준',
-              value: conversionLabels[result.conversionType],
-            },
-            {
-              label: '급여',
-              value: `${result.type} ${formatCurrency(result.hourlyWage)}`,
-            },
-          ]}
-        />
-      </SectionWrapper>
-      <SectionWrapper>
-        <Heading level={3} palette="black">근무시간 정보</Heading>
-        <StyledInfoCard
-          info={[{
-            label: '총 근무시간',
-            value: `${Math.floor(result.hoursWorked)}시간 ${(Math.ceil(result.hoursWorked * 60)) % 60}분`,
-          }]}
         />
       </SectionWrapper>
       <PageAction actions={[]}>
-        <Button label="계산 내역으로" to="/history" />
+        <Button label="계산 내역으로" to="/history?tab=hourly" />
         <Button
           transparent
           label="계산 결과 삭제"
