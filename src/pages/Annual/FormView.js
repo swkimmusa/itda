@@ -212,7 +212,6 @@ const FormView = (props) => {
           await new Promise((r) => setTimeout(r, 500));
 
           const calc = annualCalc(values);
-          alert(JSON.stringify(calc, null, 2));
 
           const newId = isEdit ? id : uuidv4();
           console.log('isEdit: ', isEdit);
@@ -258,6 +257,12 @@ const FormView = (props) => {
               <FieldComponent
                 name="salary"
                 type="won"
+                quickAddValueList={[
+                  10000,
+                  50000,
+                  100000,
+                  1000000,
+                ]}
               />
             </FieldSection>
           </Step>
