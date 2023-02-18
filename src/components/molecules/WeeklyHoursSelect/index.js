@@ -102,7 +102,6 @@ const WeeklyHours = ({
         <HeaderText style={{ marginLeft: 8 }}>의 근무시간을 입력해 주세요.</HeaderText>
       </HeaderContainer>
       <ListContainer>
-
         {dayOfWeekLabelList.map((v, i) => {
           const valueIndex = mapIndex(i, startDayIndex);
           const rowLabel = dayOfWeekLabelList[valueIndex];
@@ -131,12 +130,6 @@ const WeeklyHours = ({
                     moment(formattedBaseDate).day(valueIndex).add(newMinutes, 'minutes').toISOString(),
                   ];
                   newList[valueIndex] = newValue;
-                  console.log({
-                    baseDate: formattedBaseDate,
-                    list: newList,
-                  });
-                  console.log(onChange);
-                  console.log(props);
                   onChange({
                     baseDate: formattedBaseDate,
                     list: newList,
@@ -197,7 +190,10 @@ WeeklyHours.propTypes = {
 WeeklyHours.defaultProps = {
   startDayIndex: 0, // sunday
   onChange: (v) => console.log('[WeeklyHours] onChange() ', v),
-  value: {},
+  value: {
+    list: [],
+    baseDate: moment().toISOString(),
+  },
 };
 
 export default WeeklyHours;
