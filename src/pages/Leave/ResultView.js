@@ -117,6 +117,7 @@ const ResultView = (props) => {
   } = result;
   const leaves = tab === 'joinDate' ? joinDateBasedLeaves : accountingDateBasedLeaves;
   const total = leaves.reduce((ac, cu) => ac + cu.leave, 0);
+  const currentLeaves = leaves[leaves.length - 1].leave;
   const isEdit = !!id;
   console.log(result);
   return (
@@ -136,7 +137,7 @@ const ResultView = (props) => {
           <span>의 연차발생일은 </span>
           &nbsp;
           <HeaderValue>
-            {total}일
+            {currentLeaves}일
           </HeaderValue>
           &nbsp;
           <span>
