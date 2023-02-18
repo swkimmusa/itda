@@ -14,7 +14,7 @@ import moment from 'moment';
 import get from 'lodash/get';
 import Icon from '../components/atoms/Icon';
 import Text from '../components/atoms/P';
-import Button from '../components/atoms/Button';
+import { unsetStyle } from '../components/atoms/Button';
 import { selectUser } from '../store/authentication/selectors';
 import action from '../store/leftMenu/actions';
 import RightMenuContainerComp from '../components/molecules/RightMenuContainer';
@@ -77,7 +77,8 @@ const LeftMenuButtonContainer = styled(Flex)`
   }
 `;
 
-const LeftMenuButton = styled(Flex)`
+const LeftMenuButton = styled.button`
+  ${unsetStyle};
   flex: 0;
   min-width: 28px;
   height: 28px;
