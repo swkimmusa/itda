@@ -98,10 +98,11 @@ const getWeeklyHolidayHours = (inputValues) => {
   const {
     hoursWorked,
     baseWorkHours,
+    contractWeeklyHours,
   } = inputValues;
 
   if (hoursWorked < 15) return 0;
-
+  if (contractWeeklyHours < 15) return 0;
   if (baseWorkHours) return (baseWorkHours / 5);
 
   return 0;
