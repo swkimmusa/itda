@@ -195,7 +195,7 @@ const CurrencyInput = ({ ...props }) => {
             <AddButton
               transparent
               key={addValue}
-              onClick={() => setMetaValue(value + addValue)}
+              onClick={() => setMetaValue(value ? value + addValue : addValue)}
               label={`+ ${format(addValue, { showDecimals: 'never' })}`}
             />
           );
