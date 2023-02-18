@@ -11,6 +11,8 @@ import {
 import Spinner from '../Spinner';
 import Link from '../Link';
 
+import defaultStyle, { unsetStyle } from './style';
+
 const backgroundColor = ({
   disabled,
   transparent,
@@ -41,7 +43,8 @@ const hoverForegroundColor = ({
 }) => !disabled && transparent && palette(0);
 
 const styles = css`
-  display: block;
+  ${defaultStyle}
+  display: flex;
   text-align: center;
   font-family: ${font('secondary')};
   font-size: 14px;
@@ -56,25 +59,13 @@ const styles = css`
   align-items: center;
   white-space: nowrap;
   justify-content: center;
-  text-decoration: none;
   cursor: ${ifProp('disabled', 'no-drop', 'pointer')};
-  appearance: none;
   box-sizing: border-box;
   pointer-events: ${ifProp('disabled', 'none', 'auto')};
   transition: all 0.15s ease;
   background-color: ${backgroundColor};
   color: ${foregroundColor};
 
-  // &:hover,
-  // &:focus,
-  // &:active {
-  //   background-color: ${hoverBackgroundColor};
-  //   color: ${hoverForegroundColor};
-  // }
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const StyledLink = styled(
@@ -172,3 +163,7 @@ Button.defaultProps = {
 };
 
 export default Button;
+export {
+  defaultStyle,
+  unsetStyle,
+};
