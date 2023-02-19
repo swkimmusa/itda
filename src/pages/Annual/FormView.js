@@ -236,11 +236,6 @@ const FormView = (props) => {
                 name="conversionType"
                 type="buttonSelect"
                 label="현재 급여를 입력해 주세요."
-                // buttonStyle={{
-                //   paddingTop: 18,
-                //   paddingBottom: 18,
-                //   flex: 1,
-                // }}
                 options={[
                   {
                     label: '연봉',
@@ -256,6 +251,19 @@ const FormView = (props) => {
             <FieldSection>
               <FieldComponent
                 name="salary"
+                type="won"
+                quickAddValueList={[
+                  10000,
+                  50000,
+                  100000,
+                  1000000,
+                ]}
+              />
+            </FieldSection>
+            <FieldSection>
+              <FieldComponent
+                label="국민연금 신고액"
+                name="reportedSalary"
                 type="won"
                 quickAddValueList={[
                   10000,

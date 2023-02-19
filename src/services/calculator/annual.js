@@ -15,14 +15,14 @@ import {
 
 import taxBracket from '../taxBracket.json';
 
-console.log(taxBracket);
-
 export const nationalPensionRate = 0.09;
 export const healthInsuranceRate = 0.0709;
 export const longTermHealthInsuranceRate = 0.1281;
 export const employmentInsuranceRate = 0.018;
 
-export const maxNationalPensionRate = 248500;
+export const maxNationalPensionRate = 248850;
+
+export const ordinaryMonthlyWorkHours = 209;
 
 const defaultInputValues = {
   conversionType: 'annual',
@@ -83,12 +83,11 @@ const getPensionMonthlySalary = (inputValues) => {
   const {
     conversionType,
     averageMonthlySalary,
+    reportedSalary,
+    nonTaxableIncome,
   } = inputValues;
-
-  if (conversionType === 'annual') return averageMonthlySalary;
-  if (conversionType === 'monthly') return averageMonthlySalary;
-
-  return 0;
+  if (reportedSalary > -1) return reportedSalary;
+  return averageMonthlySalary - (nonTaxableIncome || 0);
 };
 
 const getOrdinaryMonthlySalary = (inputValues) => {
@@ -98,7 +97,7 @@ const getOrdinaryMonthlySalary = (inputValues) => {
 
 const getOrdinaryHourlySalary = (inputValues) => {
   const { averageMonthlySalary } = inputValues;
-  return roundTo(averageMonthlySalary / 209, 0, 'down'); // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
+  return roundTo(averageMonthlySalary / ordinaryMonthlyWorkHours, 0, 'down'); // 통상임금은 추가수당계산의 중간값임으로 반올림하지 않는다
 };
 
 const getAddedWageGroup = (inputValues) => {
@@ -241,7 +240,7 @@ const getInsuranceGroup = (inputValues) => {
   } = inputValues;
   const nationalPension = Math.min(
     roundTo(
-      Math.max(pensionMonthlySalary - nonTaxableIncome, 0)
+      pensionMonthlySalary
         * nationalPensionRate
         * 0.5,
       -1,

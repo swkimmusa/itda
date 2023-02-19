@@ -148,12 +148,12 @@ const ResultView = (props) => {
               valueStyle: { fontWeight: 'bold' },
             },
             {
-              label: '부양 가족 수',
-              value: `${result.numOfFamily}명`,
+              label: '비과세액',
+              value: formatCurrency(result.nonTaxableIncome),
             },
             {
-              label: '20세 이하 자녀 수',
-              value: `${result.numOfFamilyUnderAge}명`,
+              label: '환산기준',
+              value: result.conversionType === 'annual' ? '연봉' : '월급',
             },
           ]}
         />
@@ -202,6 +202,14 @@ const ResultView = (props) => {
         <StyledInfoCard
           info={[
             {
+              label: '부양 가족 수',
+              value: `${result.numOfFamily}명`,
+            },
+            {
+              label: '20세 이하 자녀 수',
+              value: `${result.numOfFamilyUnderAge}명`,
+            },
+            {
               label: '국민연금',
               value: formatCurrency(result.nationalPension),
             },
@@ -210,7 +218,7 @@ const ResultView = (props) => {
               value: formatCurrency(result.healthInsurance),
             },
             {
-              label: '장기요양',
+              label: 'ㄴ 장기요양',
               value: formatCurrency(result.longTermHealthInsurance),
             },
             {
@@ -222,7 +230,7 @@ const ResultView = (props) => {
               value: formatCurrency(result.earnedIncomeTax),
             },
             {
-              label: '주민세',
+              label: 'ㄴ 지방소득세',
               value: formatCurrency(result.residentTax),
             },
             {
@@ -231,7 +239,9 @@ const ResultView = (props) => {
                 result.nationalPension
                 + result.healthInsurance
                 + result.longTermHealthInsurance
-                + result.employmentInsurance,
+                + result.employmentInsurance
+                + result.earnedIncomeTax
+                + result.residentTax,
               ),
               labelStyle: { fontWeight: 'bold' },
               valueStyle: { fontWeight: 'bold' },
