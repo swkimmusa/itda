@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "kr.co.itdaapp.staging.twa",
+      "sha256_cert_fingerprints":
+        ["80:A3:69:B8:94:42:E8:C7:12:81:78:FC:59:C2:AA:0B:AB:8B:D0:29:02:31:28:3A:0D:99:CA:79:53:A6:7E:72"]
+    }
+  }
+]
