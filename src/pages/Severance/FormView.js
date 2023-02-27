@@ -209,7 +209,6 @@ const FormView = (props) => {
           await new Promise((r) => setTimeout(r, 500));
 
           const calc = severanceCalc(values);
-          alert(JSON.stringify(calc, null, 2));
 
           const newId = isEdit ? id : uuidv4();
           calcActions.setCalc(calc.inputValues, newId);
