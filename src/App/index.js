@@ -29,7 +29,7 @@ import LeaveResultView from '../pages/Leave/ResultView';
 
 const routes = [
   {
-    label: 'Recent History',
+    label: '계산 내역',
     href: '/history',
     element: <History />,
     rootRoute: true,
@@ -89,6 +89,7 @@ const PageWrapper = styled.div`
   padding-right: ${size('padding.default')};
   flex-grow: 1;
 
+
   @media (max-width: ${size('mobileBreakpoint')}){
     padding-left: 0px;
     padding-right: 0px;
@@ -99,7 +100,15 @@ const PageWrapper = styled.div`
 const Layout = () => {
   return (
     <Wrapper>
-      <LeftMenu links={routes.filter((v) => v.rootRoute)} />
+      <LeftMenu
+        links={[
+          {
+            label: '홈',
+            href: '/',
+          },
+          ...routes.filter((v) => v.rootRoute),
+        ]}
+      />
       <PageWrapper>
         <Header />
 

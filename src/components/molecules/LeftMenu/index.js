@@ -7,6 +7,8 @@ import * as serviceWorkerRegistration from '../../../serviceWorkerRegistration';
 
 import Link from '../../atoms/Link';
 import Icon from '../../atoms/Icon';
+import Button from '../../atoms/Button';
+import Flex from '../../atoms/Flex';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -22,7 +24,9 @@ const Wrapper = styled.div`
   border-radius: 12px;
   z-index: 2;
 `;
+// const LogOutButton = styled(Button)`
 
+// `;
 const MenuWrapper = styled.div`
   flex-grow: 1;
   display: flex;
@@ -47,10 +51,10 @@ const MenuWrapper = styled.div`
 `;
 const LogoWrapper = styled(Link)`
   padding: 15px;
-  background-color: ${palette('white', 0)};
   display: flex;
   justify-content: center;
   align-items: center;
+  display: none;
 `;
 
 const MenuLink = styled(Link)`
@@ -69,7 +73,7 @@ const MenuLink = styled(Link)`
   padding: 8px 10px;
   border-left: 4px solid transparent;
 
-  &.current-link,
+  &.active,
   &:hover,
   &:focus {
     background-color: ${palette('black', 1)};
@@ -92,12 +96,6 @@ const LeftMenu = ({
           <li key={link.href}>
             <MenuLink
               to={link.href}
-              className={(navData) => {
-                if (navData.isActive) {
-                  return 'current-link';
-                }
-                return null;
-              }}
               label={link.label}
             >
               <Icon icon="leftMenuIcon" height={24} style={{ marginRight: 10 }} />
@@ -106,10 +104,15 @@ const LeftMenu = ({
           </li>
         ))}
       </ul>
-      <div>
-        <MenuLink
-          to="/"
-          onClick={() => {
+      <Flex style={{ flex: 0 }}>
+        <Button
+          palette="white"
+          style={{ flex: 1 }}
+          label="SW 리셋"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
             onClose();
             serviceWorkerRegistration.unregister()
               .then((unregResult) => {
@@ -118,9 +121,8 @@ const LeftMenu = ({
                 window.location.reload();
               });
           }}
-        >Log Out
-        </MenuLink>
-      </div>
+        />
+      </Flex>
 
     </MenuWrapper>
   </Wrapper>
