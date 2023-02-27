@@ -28,7 +28,7 @@ import InlineModal from '../../components/molecules/InLineModal';
 
 import ProgressBar from '../../components/molecules/ProgressBar';
 import WeeklyHoursSelect from '../../components/molecules/WeeklyHoursSelect';
-
+import MonthlyHoursSelect from '../../components/organisms/MonthlyHoursSelect';
 import PageAction from '../../components/organisms/PageAction';
 
 import calcActions from '../../store/calculation/actions';
@@ -46,6 +46,7 @@ const FieldSection = styled(Flex)`
   margin-top: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
+  display: ${ifProp('hidden', 'none', 'flex')};
 `;
 
 const StyledInput = styled(Input)`
@@ -129,6 +130,48 @@ const ProgressText = styled(Text)`
   margin-bottom: 6px;
 `;
 
+const HoursSelectGroup = () => {
+  const { values } = useFormikContext();
+  const { conversionType } = values;
+
+  return (
+    <>
+      <FieldSection
+        hidden={conversionType !== 'weekly'}
+      >
+        <FieldComponent
+          name="weeklyHours"
+          InputComponent={WeeklyHoursSelect}
+          mapFieldPropsToInputProps={({
+            meta,
+            helpers,
+          }) => ({
+            onChange: helpers.setValue,
+            value: meta.value,
+          })}
+          startDayIndex={0}
+        />
+      </FieldSection>
+      <FieldSection
+        hidden={conversionType !== 'monthly'}
+      >
+        <FieldComponent
+          name="monthlyHours"
+          InputComponent={MonthlyHoursSelect}
+          mapFieldPropsToInputProps={({
+            meta,
+            helpers,
+          }) => ({
+            onChange: helpers.setValue,
+            value: meta.value,
+          })}
+          startDayIndex={0}
+        />
+      </FieldSection>
+    </>
+  );
+};
+
 const getDefaultInitialValues = () => ({
   type: 'hourly',
   smallBusiness: false,
@@ -136,10 +179,15 @@ const getDefaultInitialValues = () => ({
   conversionType: 'weekly',
   insuranceType: 'employee',
   weeklyHours: {
-    startDate: moment().toISOString(),
+    baseDate: moment().toISOString(),
+    list: [],
+  },
+  monthlyHours: {
+    baseDate: moment().toISOString(),
     list: [],
   },
 });
+
 const FormView = (props) => {
   const { calculationList } = props;
 
@@ -173,9 +221,11 @@ const FormView = (props) => {
   };
   const prev = () => {
     if (step > 0) {
+      const newStep = step - 1;
+      // if (newStep === 2 && )
       setQueryParams((query) => ({
         ...query,
-        step: step - 1,
+        step: newStep,
       }));
     }
   };
@@ -191,7 +241,6 @@ const FormView = (props) => {
           await new Promise((r) => setTimeout(r, 500));
 
           const calc = hourlyCalc(values);
-          alert(JSON.stringify(calc, null, 2));
 
           const newId = isEdit ? id : uuidv4();
           calcActions.setCalc(calc.inputValues, newId);
@@ -244,7 +293,6 @@ const FormView = (props) => {
                   {
                     label: '월급',
                     value: 'monthly',
-                    disabled: true,
                   },
                 ]}
                 name="conversionType"
@@ -262,20 +310,7 @@ const FormView = (props) => {
             </FieldSection>
           </Step>
           <Step step={1} currentStep={step}>
-            <FieldSection>
-              <FieldComponent
-                name="weeklyHours"
-                InputComponent={WeeklyHoursSelect}
-                mapFieldPropsToInputProps={({
-                  meta,
-                  helpers,
-                }) => ({
-                  onChange: helpers.setValue,
-                  value: meta.value,
-                })}
-                startDayIndex={0}
-              />
-            </FieldSection>
+            <HoursSelectGroup />
           </Step>
           <Step step={2} currentStep={step}>
             <FieldSection>

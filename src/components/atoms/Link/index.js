@@ -7,6 +7,7 @@ import { ifProp } from 'styled-tools';
 import { NavLink } from 'react-router-dom';
 
 const styles = css`
+
   font-family: ${font('primary')};
   text-decoration: none;
   color: ${ifProp({ disabled: true }, palette('grayscale', 4), palette(3))};
@@ -17,12 +18,13 @@ const styles = css`
   &:hover,
   &:focus {
     text-decoration: ${ifProp(
-    [
-      { disabled: true },
-      { disableStyle: true },
-    ],
+    'disabled',
     'none',
-    'none',
+    ifProp(
+      'disabledStyle',
+      'none',
+    ),
+    'underline',
   )};
   }
 `;
