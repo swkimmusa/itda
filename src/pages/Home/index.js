@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { get } from 'lodash';
 import {
   size, palette,
 } from 'styled-theme';
@@ -187,6 +188,6 @@ const Home = ({
 
 Home.propTypes = { };
 
-const mapStateToProps = (state, ownProps) => ({ calculationList: state.calculation.list });
+const mapStateToProps = (state, ownProps) => ({ calculationList: get(state, 'calculation.list', []) });
 // const mapDispatchToProps = (dispatch) => ({ setListAction: (v) => dispatch(v) });
 export default connect(mapStateToProps)(Home);
