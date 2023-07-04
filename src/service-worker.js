@@ -7,13 +7,22 @@
 // You can also remove this file if you'd prefer not to use a
 // service worker, and the Workbox build step will be skipped.
 
-import { clientsClaim } from 'workbox-core';
+import {
+  setCacheNameDetails, clientsClaim,
+} from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {
   precacheAndRoute, createHandlerBoundToURL,
 } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
+
+const CACHE_VARIABLE = process.env.REACT_APP_VERSION_UNIQUE_STRING;
+
+setCacheNameDetails({
+  prefix: 'itda-app',
+  suffix: CACHE_VARIABLE,
+});
 
 clientsClaim();
 
@@ -70,6 +79,15 @@ registerRoute(
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+
+  // Our special skip waiting function!
+  if (event.data && event.data.type === 'SKIP_WAITING_WHEN_SOLO') {
+    self.clients.matchAll({ includeUncontrolled: true }).then((clients) => {
+      if (clients.length < 2) {
+        self.skipWaiting();
+      }
+    });
   }
 });
 

@@ -50,8 +50,8 @@
     "workbox-streams": "6.5.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_VERSION_UNIQUE_STRING=$(date +%s) react-scripts start",
+    "build": "REACT_APP_VERSION_UNIQUE_STRING=$(date +%s) react-scripts build",
     "build:page": "NODE_ENV=development react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

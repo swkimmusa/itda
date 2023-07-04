@@ -18,8 +18,14 @@ const isLocalhost = Boolean(
     || window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),
 );
 
+console.log(2);
+console.log(process.env);
 export function register(config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  console.log('called register');
+  if (
+    (process.env.NODE_ENV === 'production' || process.env.REACT_APP_SERVICEWORKER_FORCE_ENABLE === 'true')
+    && 'serviceWorker' in navigator
+  ) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -28,9 +34,12 @@ export function register(config) {
       // serve assets; see https://github.com/facebook/create-react-app/issues/2374
       return;
     }
+    console.log(publicUrl);
 
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      console.log('isLocalhost: ', isLocalhost);
+      console.log(swUrl);
 
       if (isLocalhost) {
         // This is running on localhost. Let's check if a service worker still exists or not.
@@ -51,11 +60,17 @@ export function register(config) {
     });
   }
 }
+console.log(1);
 
 function registerValidSW(swUrl, config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
+      console.log(registration);
+      if (registration.waiting && registration.active) {
+        // WE SET OUR VARIABLE HERE
+        window.swNeedUpdate = true;
+      }
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
