@@ -105,8 +105,12 @@ const FieldComponent = (props) => {
   const isCustomInput = InputComponent !== StyledInput;
 
   const mappedProps = mapInputValuesToProps(values);
-  console.log('field: ', field);
 
+  const aggregateProps = {
+    ...otherProps,
+    ...mappedProps,
+  };
+  if (aggregateProps.hide) return null;
   return (
     <InputComponent
       {...otherProps}
@@ -198,7 +202,7 @@ const FormView = (props) => {
       }));
     }
   };
-
+  console.log(props);
   return (
     <Wrapper>
       <ProgressText>내역은 자동저장되니 걱정마세요.</ProgressText>
@@ -264,6 +268,10 @@ const FormView = (props) => {
               <FieldComponent
                 label="국민연금 신고액"
                 name="reportedSalary"
+                mapInputValuesToProps={(iValues) => {
+                  console.log(iValues);
+                  return { hide: iValues.type === 'annual' };
+                }}
                 type="won"
                 quickAddValueList={[
                   10000,

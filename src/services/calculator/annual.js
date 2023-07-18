@@ -20,7 +20,7 @@ export const healthInsuranceRate = 0.0709;
 export const longTermHealthInsuranceRate = 0.1281;
 export const employmentInsuranceRate = 0.018;
 
-export const maxNationalPensionRate = 248850;
+export const maxNationalPensionRate = 265500;
 
 export const ordinaryMonthlyWorkHours = 209;
 
