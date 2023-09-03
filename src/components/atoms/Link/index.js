@@ -7,10 +7,9 @@ import { ifProp } from 'styled-tools';
 import { NavLink } from 'react-router-dom';
 
 const styles = css`
-
   font-family: ${font('primary')};
   text-decoration: none;
-  color: ${ifProp({ disabled: true }, palette('grayscale', 4), palette(3))};
+  color: ${ifProp({ disabled: true }, palette('grayscale', 4), palette(0))};
   transition: all 0.1s ease;
   cursor: ${ifProp({ disabled: true }, 'no-drop')};
   pointer-events: ${ifProp({ disabled: true }, 'none')};

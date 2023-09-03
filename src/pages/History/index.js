@@ -7,26 +7,28 @@ import styled from 'styled-components';
 import {
   size, palette,
 } from 'styled-theme';
+import moment from 'moment';
+import {
+  CSVLink, CSVDownload,
+} from 'react-csv';
+
 // import Card from '../../components/atoms/Card';
+import _ from 'lodash';
 import Text from '../../components/atoms/P';
 
 import Flex from '../../components/atoms/Flex';
 import Link from '../../components/atoms/Link';
 import Button from '../../components/atoms/Button';
 import CalcSummHeader from '../../components/molecules/CalcSummHeader';
-import propTypes from '../../propTypes';
 import Heading from '../../components/atoms/Heading';
 import ButtonRadio from '../../components/molecules/ButtonRadio';
 import PageAction from '../../components/organisms/PageAction';
 import useQueryParams from '../../hooks/useQueryParams';
 import calcActions from '../../store/calculation/actions';
-
-import calc from '../../assets/image/calc.png';
-import calendar from '../../assets/image/calendar.png';
-import yearly from '../../assets/image/yearly.png';
-import hourly from '../../assets/image/hourly.png';
-
+import exportImage from '../../assets/image/export.png';
+import { inputFrame as hourlyInputFrame } from '../../services/calculator/hourly';
 import { hourlyCalc } from '../../services/calculator';
+import Image from '../../components/atoms/Image';
 
 const Wrapper = styled(Flex)`
   flex: 1;
@@ -48,6 +50,9 @@ const TotalSection = styled(Flex)`
 `;
 const TotalText = styled(Text)`
   font-size: 14px;
+  align-items: center;
+  align-self: center;
+  margin-right: 8px;
 `;
 const TotalCardSection = styled(Flex)`
   flex-direction: column;
@@ -99,9 +104,45 @@ const History = ({
   const { tab } = queryParams;
   const keys = Object.keys(calculationList);
   const filteredKeys = keys.filter((key) => calculationList[key].type === tab);
-  console.log(keys);
-  console.log(tab);
-  console.log(filteredKeys);
+  console.log(calculationList);
+  const calcToCSVData = (calc) => {
+  };
+  const filteredCalcList = filteredKeys.map((key) => {
+    return [
+      {
+        label: 'id',
+        value: key,
+      },
+      ...hourlyCalc(calculationList[key]).resultDisplay,
+    ];
+  });
+  console.log('#### ', filteredCalcList);
+  const exportHeader = _.map(
+    filteredCalcList,
+    (calc) => {
+      return calc.map((line) => line.label);
+    },
+  );
+  const exportData = _.map(
+    filteredCalcList,
+    (calc) => {
+      return calc.map((line) => line.value);
+    },
+  );
+  const csvData = [
+    exportHeader[0],
+    ...exportData,
+  ].filter((v) => !!v);
+  console.log('####', [
+    exportHeader[0],
+    ...exportData,
+  ]);
+  const tabToLabel = {
+    hourly: '시급',
+    annual: '연봉',
+    leave: '연차',
+    severance: '퇴직금',
+  };
   return (
     <Wrapper>
       <HeaderContainer>
@@ -140,9 +181,17 @@ const History = ({
       </HeaderContainer>
       <SectionContainer>
         <TotalSection>
-          <TotalText>
-            전체 {filteredKeys.length} 건
-          </TotalText>
+          <Flex direction="row">
+            <TotalText>
+              전체 {filteredKeys.length} 건
+            </TotalText>
+            <CSVLink
+              data={csvData}
+              filename={`${tabToLabel[tab]}-${moment().format('YYYY-MMMM-Do')}.csv`}
+            >
+              <Image height={18} width={18} src={exportImage} />
+            </CSVLink>
+          </Flex>
           <TotalCardSection>
             {filteredKeys.map((k) => {
               const currentCalculation = hourlyCalc(calculationList[k]);

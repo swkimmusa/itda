@@ -12,13 +12,17 @@ import {
 
 import moment from 'moment';
 import get from 'lodash/get';
+import {
+  SignedIn, SignedOut, UserButton,
+} from '@clerk/clerk-react';
 import Icon from '../components/atoms/Icon';
 import Text from '../components/atoms/P';
-import { unsetStyle } from '../components/atoms/Button';
+import Button, { unsetStyle } from '../components/atoms/Button';
 import { selectUser } from '../store/authentication/selectors';
 import action from '../store/leftMenu/actions';
 import RightMenuContainerComp from '../components/molecules/RightMenuContainer';
 import Flex from '../components/atoms/Flex';
+import Link from '../components/atoms/Link';
 
 const { open } = action;
 
@@ -47,6 +51,7 @@ const LeftContainer = styled(Flex)`
 const RightContainer = styled(Flex)`
   display: flex;
   align-items: center;
+  align-self: center;
 `;
 
 const StyledIcon = styled(Icon)`
@@ -98,6 +103,10 @@ const LogoText = styled(Text)`
   font-weight: 700; //bold
 
 `;
+const LoginLink = styled(Link)`
+  margin-left: auto;
+  align-self: center;
+`;
 
 const StyledHeading = styled(Text)`
 `;
@@ -112,6 +121,14 @@ const Header = ({
   onClose,
   notifications,
 }) => {
+  const location = useLocation();
+  const {
+    pathname,
+    search,
+  } = location;
+  const navigate = useNavigate();
+  console.log('rendering!!!');
+  console.log(`${pathname}${search}`);
   return (
     <HeaderContainer>
       <LeftMenuButtonContainer>
@@ -119,6 +136,7 @@ const Header = ({
           <Icon icon="logo" classnames="filled" height={20} />
         </LeftMenuButton>
         <LogoTextContainer>
+
           <LogoText>itda</LogoText>
         </LogoTextContainer>
       </LeftMenuButtonContainer>
@@ -127,7 +145,18 @@ const Header = ({
         {startCase(title)}
       </StyledHeading>
       <RightContainer>
-        {renderRight && renderRight()}
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+        <SignedOut>
+          <LoginLink
+            palette="primary"
+            to="/sign-in"
+          >
+            로그인
+          </LoginLink>
+        </SignedOut>
+        {/* {renderRight && renderRight()} */}
       </RightContainer>
     </HeaderContainer>
   );

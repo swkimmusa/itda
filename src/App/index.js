@@ -2,7 +2,17 @@ import {
   Route,
   Routes,
   Outlet,
+  useNavigate,
 } from 'react-router-dom';
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignUp,
+  UserButton,
+} from '@clerk/clerk-react';
+import { koKR } from '@clerk/localizations';
 import {
   palette, size,
 } from 'styled-theme';
@@ -33,6 +43,16 @@ const routes = [
     href: '/history',
     element: <History />,
     rootRoute: true,
+  },
+  {
+    label: 'SignIn',
+    href: '/sign-in',
+    element: <SignIn />,
+  },
+  {
+    label: 'SignUp',
+    href: '/sign-up',
+    element: <SignUp />,
   },
   {
     label: 'HourlyForm',
@@ -118,25 +138,34 @@ const Layout = () => {
     </Wrapper>
   );
 };
-
+const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
+console.log(koKR);
 const App = () => {
+  const navigate = useNavigate();
   return (
-    <Wrapper>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          {routes.map((route) => {
-            const isInternal = route.href[0] === '/';
-            if (!isInternal) return null;
-            return (
-              <Route key={route.href} path={route.href} element={route.element} />
-            );
-          })}
-          {/* 404 */}
-          <Route path="*" component={NotFound} />
-        </Route>
-      </Routes>
-    </Wrapper>
+    <ClerkProvider
+      publishableKey={clerkPubKey}
+      navigate={(to) => navigate(to)}
+      localization={koKR}
+    >
+      <Wrapper>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            {routes.map((route) => {
+              const isInternal = route.href[0] === '/';
+              if (!isInternal) return null;
+              return (
+                <Route key={route.href} path={route.href} element={route.element} />
+              );
+            })}
+            {/* 404 */}
+            <Route path="*" component={NotFound} />
+          </Route>
+        </Routes>
+      </Wrapper>
+    </ClerkProvider>
+
   );
 };
 

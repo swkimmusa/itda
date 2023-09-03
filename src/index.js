@@ -7,6 +7,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import dayjs from 'dayjs';
+
+import '@coreui/coreui/dist/css/coreui.min.css';
+
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 

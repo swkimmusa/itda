@@ -78,6 +78,13 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
   }
 
-
+  .cl-signIn-root,
+  .cl-signUp-root {
+    margin: auto;
+    margin-top: 20px;
+  }
+  .cl-userButton-root {
+    margin-left: auto;
+  }
 `;
 export default GlobalStyle;

@@ -6,7 +6,7 @@ import {
   palette, font,
 } from 'styled-theme';
 import {
-  ifProp, switchProp, prop,
+  ifProp, switchProp, prop, ifNotProp,
 } from 'styled-tools';
 import Spinner from '../Spinner';
 import Link from '../Link';
@@ -44,28 +44,34 @@ const hoverForegroundColor = ({
 
 const styles = css`
   ${defaultStyle}
-  display: flex;
-  text-align: center;
-  font-family: ${font('secondary')};
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  border: 2px solid ${ifProp('transparent', 'transparent', 'transparent')};
-  ${ifProp('borderColor', css`
-    border-color: ${({ borderColor }) => borderColor};
-  `)}
-  padding: 16px;
-  border-radius: 14px;
-  align-items: center;
-  white-space: nowrap;
-  justify-content: center;
-  cursor: ${ifProp('disabled', 'no-drop', 'pointer')};
-  box-sizing: border-box;
-  pointer-events: ${ifProp('disabled', 'none', 'auto')};
-  transition: all 0.15s ease;
-  background-color: ${backgroundColor};
-  color: ${foregroundColor};
-
+  ${ifProp(
+    'removeStyle',
+    css`
+    `,
+    css`
+      display: flex;
+      text-align: center;
+      font-family: ${font('secondary')};
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14px;
+      border: 2px solid ${ifProp('transparent', 'transparent', 'transparent')};
+      ${ifProp('borderColor', css`
+        border-color: ${({ borderColor }) => borderColor};
+      `)}
+      padding: 16px;
+      border-radius: 14px;
+      align-items: center;
+      white-space: nowrap;
+      justify-content: center;
+      cursor: ${ifProp('disabled', 'no-drop', 'pointer')};
+      box-sizing: border-box;
+      pointer-events: ${ifProp('disabled', 'none', 'auto')};
+      transition: all 0.15s ease;
+      background-color: ${backgroundColor};
+      color: ${foregroundColor};
+    `,
+  )}
 `;
 
 const StyledLink = styled(
@@ -159,7 +165,7 @@ Button.defaultProps = {
   to: null,
   href: null,
   type: 'button',
-  label: 'Button',
+  label: null,
 };
 
 export default Button;

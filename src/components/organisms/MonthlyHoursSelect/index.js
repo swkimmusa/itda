@@ -8,7 +8,9 @@ import { ifProp } from 'styled-tools';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
+import { COffcanvas } from '@coreui/react';
 
+import { useState } from 'react';
 import Card from '../../atoms/Card';
 import Text from '../../atoms/P';
 import Flex from '../../atoms/Flex';
@@ -22,6 +24,8 @@ import { rowCardStyles } from './styles';
 // import BaseInput, { styles as inputStyles } from '../Input/BaseInput';
 
 import BaseInput, { styles as inputStyles } from '../../molecules/Input/BaseInput';
+import Input from '../../molecules/Input';
+import Button from '../../atoms/Button';
 
 const Container = styled(Flex)`
   flex-direction: column;
@@ -45,15 +49,16 @@ const DayOfWeekLabel = styled(Text)`
 
 const StyledInput = styled(BaseInput)`
   flex-basis: 100px;
-  margin-left: 16px;
   flex-grow: 1;
   text-align: end;
 `;
-const TimeMinutTextContainer = styled(Flex)`
+const TimeMinuteTextContainer = styled(Flex)`
+  flex: 0;
   align-items: center;
   margin-left: 8px;
+  margin-right: 8px;
 `;
-const TimeMinueText = styled(Text)`
+const TimeMinuteText = styled(Text)`
   white-space: nowrap;
 `;
 const ListContainer = styled(Flex)`
@@ -78,12 +83,20 @@ const HeaderCard = styled(Card)`
 `;
 
 const StyledDayCard = styled(DayCard)`
+  cursor: pointer;
+  border: 2px solid ${palette('grayscale', 4)};;
   ${ifProp(
     'disabled',
     css`
-      opacity: 0.8;
-      color: ${palette('grayscale', 1)};
+      opacity: 0.5;
+      color: ${palette('grayscale', 4)};
       pointer-events: none;
+    `,
+  )};
+  ${ifProp(
+    'selected',
+    css`
+      border: 2px solid ${palette('green', 0)};
     `,
   )};
 `;
@@ -101,6 +114,18 @@ const MonthlyHoursSelect = ({
     list,
     baseDate,
   } = value;
+  const [
+    selectedDays,
+    setSelectedDays,
+  ] = useState([]);
+  const [
+    hourV,
+    setHourV,
+  ] = useState(0);
+  const [
+    minuteV,
+    setMinuteV,
+  ] = useState(0);
   const formattedBaseDate = dayjs(baseDate)
     .startOf('month')
     .hour(9)
@@ -145,9 +170,9 @@ const MonthlyHoursSelect = ({
     const startIndex = i * 7;
     return days.slice(startIndex, startIndex + 7);
   });
-  console.log(days);
-  console.log(rows);
-  // const rows =
+  const minutesWorked = ((Number(hourV) || 0) * 60) + (Number(minuteV) || 0);
+
+  console.log(value, selectedDays);
   return (
     <Container
       white
@@ -161,7 +186,7 @@ const MonthlyHoursSelect = ({
           picker="month"
           value={dayjs(formattedBaseDate)}
         />
-        <HeaderText style={{ marginLeft: 8 }}>의 근무을 입력해 주세요.</HeaderText>
+        <HeaderText style={{ marginLeft: 8 }}>의 근무 시간을 입력해 주세요.</HeaderText>
       </HeaderContainer>
       <RowContainer>
         {dayOfWeekLabelList.map((v, i) => {
@@ -175,99 +200,111 @@ const MonthlyHoursSelect = ({
       {rows.map((daysInWeek, ri) => (
         <RowContainer key={ri}>
           {daysInWeek.map((day, i) => {
+            const isSelected = selectedDays.indexOf(day) > -1;
+            const range = _.find(value.list, (v) => v[0] === day);
+            const minutes = range && moment(range[1]).diff(moment(range[0]), 'minutes');
             return (
               <StyledDayCard
+                onClick={() => {
+                  if (!isSelected) {
+                    return setSelectedDays(_.uniq([
+                      ...selectedDays,
+                      day,
+                    ]));
+                  }
+                  return setSelectedDays([
+                    ...selectedDays,
+                    day,
+                  ].filter((v) => v !== day));
+                }}
                 key={day}
                 date={day}
-                selected={false}
+                selected={isSelected}
                 disabled={!(
                   moment(formattedBaseDate).year() === moment(day).year()
                     && moment(formattedBaseDate).month() === moment(day).month()
                 )}
+                minutesWorked={minutes}
               />
             );
           })}
         </RowContainer>
       ))}
-      <ListContainer>
-        {dayOfWeekLabelList.map((v, i) => {
-          const valueIndex = i;
-          const rowLabel = dayOfWeekLabelList[valueIndex];
-          const currentDay = moment(formattedBaseDate);
-          const currentValue = list[valueIndex] || [
-            formattedBaseDate,
-            formattedBaseDate,
-          ];
-          const diffMinutes = moment(currentValue[1]).diff(moment(moment(currentValue[0])), 'minutes');
-          return (
-            <RowContainer
-              key={rowLabel}
-            >
-              <DayOfWeekLabel>{rowLabel}</DayOfWeekLabel>
-              <StyledInput
-                value={getHoursFromMinutes(diffMinutes)}
-                type="number"
-                onChange={(hour) => {
-                  const newList = list.slice();
-                  const inputValue = Number(hour.target.value);
-                  const limitedInputValue = inputValue > 23 ? 23 : (inputValue < 0 ? 0 : inputValue);
-                  const prevHours = getHoursFromMinutes(diffMinutes);
-                  const newMinutes = diffMinutes - (prevHours * 60) + (limitedInputValue * 60);
-                  const newValue = [
-                    moment(formattedBaseDate).day(valueIndex).toISOString(),
-                    moment(formattedBaseDate).day(valueIndex).add(newMinutes, 'minutes').toISOString(),
-                  ];
-                  newList[valueIndex] = newValue;
-                  console.log({
-                    baseDate: formattedBaseDate,
-                    list: newList,
-                  });
-                  console.log(onChange);
-                  console.log(props);
-                  onChange({
-                    baseDate: formattedBaseDate,
-                    list: newList,
-                  });
-                }}
-              />
-              <TimeMinutTextContainer>
-                <TimeMinueText>
-                  시간
-                </TimeMinueText>
-              </TimeMinutTextContainer>
 
-              <StyledInput
-                value={diffMinutes % 60}
-                type="number"
-                max={60}
-                onChange={(minute) => {
-                  const newList = list.slice();
-                  const inputValue = Number(minute.target.value);
-                  const limitedInputValue = inputValue > 59 ? 59 : (inputValue < 0 ? 0 : inputValue);
-                  const prevMinutes = diffMinutes % 60;
-                  const newMinutes = diffMinutes - prevMinutes + limitedInputValue;
-                  const newValue = [
-                    moment(formattedBaseDate).day(valueIndex).toISOString(),
-                    moment(formattedBaseDate).day(valueIndex).add(newMinutes, 'minutes').toISOString(),
-                  ];
-                  newList[valueIndex] = newValue;
-                  onChange({
-                    baseDate: formattedBaseDate,
-                    list: newList,
-                  });
-                }}
-              />
-              <TimeMinutTextContainer>
-                <TimeMinueText>
-                  분
-                </TimeMinueText>
-              </TimeMinutTextContainer>
-
-            </RowContainer>
-          );
-        })}
-      </ListContainer>
-
+      <COffcanvas
+        visible={selectedDays.length > 0}
+        placement="bottom"
+        backdrop={false}
+        onHide={() => {}}
+        style={{
+          height: 'auto',
+          backgroundColor: 'transparent',
+          border: 'none',
+          width: '100vh',
+        }}
+      >
+        <Card white>
+          <Text style={{
+            fontSize: 18,
+            fontWeight: 'medium',
+            color: 'black',
+            marginBottom: 20,
+          }}
+          >근무 시간을 입력해주세요
+          </Text>
+          <Flex direction="row">
+            <StyledInput
+              value={hourV}
+              type="number"
+              onChange={(e) => setHourV(e.target.value)}
+              required
+            />
+            <TimeMinuteTextContainer>
+              <TimeMinuteText>
+                시간
+              </TimeMinuteText>
+            </TimeMinuteTextContainer>
+            <StyledInput
+              value={minuteV}
+              type="number"
+              onChange={(e) => setMinuteV(e.target.value)}
+              required
+            />
+            <TimeMinuteTextContainer>
+              <TimeMinuteText>
+                분
+              </TimeMinuteText>
+            </TimeMinuteTextContainer>
+          </Flex>
+          <Button
+            style={{ marginTop: 15 }}
+            label="시간 입력하기"
+            onClick={() => {
+              // const newList = list.slice();
+              const newList = _.uniqBy(
+                [
+                  ...selectedDays.map((day) => {
+                    const newValue = [
+                      moment(day).toISOString(),
+                      moment(day).add(minutesWorked, 'minutes').toISOString(),
+                    ];
+                    return newValue;
+                  }),
+                  ...list,
+                ],
+                (v) => _.get(v, [0]),
+              );
+              onChange({
+                ...value,
+                list: newList,
+              });
+              setSelectedDays([]);
+              setHourV(0);
+              setMinuteV(0);
+            }}
+          />
+        </Card>
+      </COffcanvas>
     </Container>
   );
 };

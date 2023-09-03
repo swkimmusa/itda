@@ -76,6 +76,7 @@ const MenuLink = styled(Link)`
   &.active,
   &:hover,
   &:focus {
+    color: ${palette('white', 0)};
     background-color: ${palette('black', 1)};
     text-decoration: none;
   }
@@ -104,7 +105,7 @@ const LeftMenu = ({
           </li>
         ))}
       </ul>
-      <Flex style={{ flex: 0 }}>
+      <Flex direction="column" style={{ flex: 0 }}>
         <Button
           palette="white"
           style={{ flex: 1 }}

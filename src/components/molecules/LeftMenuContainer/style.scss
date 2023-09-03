@@ -62,6 +62,10 @@ body.no-scroll {
       &.current-link {
         color: #8C64A0;
       }
+
+      &:hover {
+        color: inherit;
+      }
     }
   }
 }

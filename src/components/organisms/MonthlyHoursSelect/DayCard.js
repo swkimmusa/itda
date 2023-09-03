@@ -20,6 +20,18 @@ const StyledCard = styled(Card)`
   ${rowCardStyles};
 `;
 
+const DateText = styled(Text)`
+  margin-bottom: auto;
+`;
+const HoursText = styled(Text)`
+  font-weight: bold;
+  margin-top: 6px;
+`;
+const HolidayText = styled(Text)`
+  color: ${palette('red', 0)};
+  font-weight: bold;
+`;
+
 const StyledText = styled(Text)`
   border-radius: 12px;
   font-size: 14px;
@@ -33,6 +45,7 @@ const StyledText = styled(Text)`
 
 const DayCard = ({
   date,
+  minutesWorked,
   isHoliday,
   ...props
 }) => {
@@ -40,7 +53,21 @@ const DayCard = ({
     <StyledCard
       {...props}
     >
-      {moment(date).date()}
+      <DateText>
+        {moment(date).date()}
+      </DateText>
+      {isHoliday && !minutesWorked ? (
+        <HolidayText>휴무</HolidayText>
+      ) : (
+        <>
+          <HoursText>
+            {minutesWorked / 60 || '-'}
+          </HoursText>
+          <Text>
+            시간
+          </Text>
+        </>
+      )}
     </StyledCard>
   );
 };
