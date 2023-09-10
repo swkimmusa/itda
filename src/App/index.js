@@ -3,6 +3,7 @@ import {
   Routes,
   Outlet,
   useNavigate,
+  useLocation,
 } from 'react-router-dom';
 import {
   ClerkProvider,
@@ -16,8 +17,10 @@ import { koKR } from '@clerk/localizations';
 import {
   palette, size,
 } from 'styled-theme';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
+import _ from 'lodash';
+import { ifProp } from 'styled-tools';
 import NotFound from '../pages/NotFound';
 import Home from '../pages/Home';
 import History from '../pages/History';
@@ -36,6 +39,7 @@ import SeveranceResultView from '../pages/Severance/ResultView';
 
 import LeaveFormView from '../pages/Leave/FormView';
 import LeaveResultView from '../pages/Leave/ResultView';
+import PayrollView from '../pages/Payroll';
 
 const routes = [
   {
@@ -94,6 +98,12 @@ const routes = [
     href: '/leave/result/:id',
     element: <LeaveResultView />,
   },
+  {
+    label: '급여관리',
+    href: '/payroll',
+    element: <PayrollView />,
+    rootRoute: true,
+  },
 ];
 
 const Wrapper = styled(Flex)`
@@ -108,16 +118,29 @@ const PageWrapper = styled.div`
   max-width: 100vw;
   padding-right: ${size('padding.default')};
   flex-grow: 1;
-
+  background-color: ${palette('white', 0)};
+  ${ifProp('$isGray', css`
+    background-color: ${palette('blue', 2)};
+  `)}
 
   @media (max-width: ${size('mobileBreakpoint')}){
     padding-left: 0px;
     padding-right: 0px;
     padding-top: 50px;
   }
+
+
 `;
 
-const Layout = () => {
+const Layout = (props) => {
+  const { pathname } = useLocation();
+  const isGray = _.some(
+    [
+      '',
+      'payroll',
+    ],
+    (check) => pathname.split('/')[1] === check,
+  );
   return (
     <Wrapper>
       <LeftMenu
@@ -129,10 +152,10 @@ const Layout = () => {
           ...routes.filter((v) => v.rootRoute),
         ]}
       />
-      <PageWrapper>
+      <PageWrapper $isGray={isGray}>
         <Header />
 
-        <Outlet />
+        <Outlet helo="hi" />
 
       </PageWrapper>
     </Wrapper>

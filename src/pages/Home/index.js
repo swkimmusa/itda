@@ -157,6 +157,7 @@ const Home = ({
         </Heading>
         <HistoryCardSection>
           {keys.map((k) => {
+            console.log({ calculationList });
             const currentCalculation = hourlyCalc(calculationList[k]);
             const { result } = currentCalculation;
             console.log(result);

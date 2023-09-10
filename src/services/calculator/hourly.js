@@ -39,10 +39,16 @@ const keyToLabel = {};
 const calculatedValues = { hoursWorked: 0 };
 
 const mergeInputValues = (inputValues) => {
-  return {
+  const merged = {
     ...clone(defaultInputValues),
     ...clone(inputValues),
   };
+  console.log({
+    defaultInputValues,
+    inputValues,
+    merged,
+  });
+  return merged;
 };
 
 const getHoursWorked = (inputValues) => {
@@ -55,18 +61,31 @@ const getHoursWorked = (inputValues) => {
     weeklyHours,
     monthlyHours,
   } = inputValues;
-
+  const weeklyHoursList = weeklyHours.list.filter((v) => v != null);
   if (conversionType === 'weekly') {
-    const minutesList = weeklyHours.list.map((range) => {
+    const minutesList = weeklyHoursList.map((range) => {
       const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
       return difference;
+    });
+    console.log({
+      weeklyHours,
+      weeklyHoursList,
+      minutesList,
+      hoursWorked: minutesList.reduce((ac, cu) => ac + cu, 0) / 60,
     });
     return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
   }
   if (conversionType === 'monthly') {
-    const minutesList = monthlyHours.list.map((range) => {
+    const minutesList = weeklyHoursList.map((range) => {
       const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
       return difference;
+    });
+    console.log({
+      monthlyHours,
+      weeklyHours,
+      weeklyHoursList,
+      minutesList,
+      hoursWorked: minutesList.reduce((ac, cu) => ac + cu, 0) / 60,
     });
     return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
   }
@@ -77,9 +96,9 @@ const getHoursWorked = (inputValues) => {
 };
 
 const getWeeklyOverTime = (weeklyHours, hoursWorked) => {
-  const numOfWorkDays = _.uniq(weeklyHours.list.map((range) => moment(range[0]).startOf('day').toISOString()));
+  const weeklyHoursList = weeklyHours.list.filter((v) => v != null);
 
-  const dailyOvertimeMinutesList = weeklyHours.list.map((range) => {
+  const dailyOvertimeMinutesList = weeklyHoursList.map((range) => {
     const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
     return Math.max(0, difference - 480);
   });
@@ -112,7 +131,6 @@ const getOvertimeHours = (inputValues) => {
     return getWeeklyOverTime(weeklyHours, hoursWorked);
   }
   if (conversionType === 'monthly') {
-
   }
   return 0;
 };

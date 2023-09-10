@@ -31,7 +31,6 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  background-color: ${palette('white', 0)};
   border-bottom: 1px solid #ECECEC;
 
   @media (max-width: ${size('mobileBreakpoint')}) {

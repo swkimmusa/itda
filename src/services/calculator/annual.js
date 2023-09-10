@@ -10,7 +10,7 @@ import {
   format, unformat,
 } from 'number-currency-format';
 import {
-  roundTo, roundCurrency,
+  roundTo, roundCurrency, formatCurrency,
 } from '../formatCurrency';
 
 import taxBracket from '../taxBracket.json';
@@ -347,9 +347,83 @@ const calculate = (inputValues) => {
     monthlyNetSalary: getMonthlyNetSalary(mergedInputValues),
   };
 
+  const result = mergedInputValues;
+  console.log(result);
+  const resultDisplay = [
+    {
+      label: '이름',
+      value: result.name,
+    },
+    {
+      label: '상시근로자수',
+      value: result.smallBusiness ? '상시 5인 미만' : '상시 5인 근로',
+    },
+    {
+      label: '환산기준',
+      value: result.conversionType === 'weekly' ? '일/주급' : '월급',
+    },
+    {
+      label: '시급',
+      value: formatCurrency(result.hourlyWage),
+    },
+    {
+      label: '근로계약서상 1주 근로시간',
+      value: result.contractWeeklyHours ? `${result.contractWeeklyHours}시간` : `미입력(${0}시간)`,
+    },
+    {
+      label: '공제액 합계',
+      value: formatCurrency(result.employmentInsurance),
+    },
+    {
+      label: '실수령액',
+      value: formatCurrency(result.netWage),
+    },
+    {
+      label: '기본급',
+      value: formatCurrency(result.baseWage),
+    },
+    {
+      label: '주휴수당',
+      value: formatCurrency(result.weeklyHolidayWage),
+    },
+    {
+      label: '연장근로수당',
+      value: formatCurrency(result.overtimeWage),
+    },
+    {
+      label: '월 급여',
+      value: formatCurrency(result.totalWage),
+    },
+    {
+      label: '고용보험(0.9%)',
+      value: formatCurrency(result.employmentInsurance),
+    },
+    {
+      label: '실수령액',
+      value: formatCurrency(result.netWage),
+    },
+    {
+      label: '총 근무시간',
+      value: `${Math.floor(result.hoursWorked)}시간 ${(Math.ceil(result.hoursWorked * 60)) % 60}분`,
+    },
+    {
+      label: '소정근로시간',
+      value: `${result.contractWeeklyHours || 0}시간`,
+    },
+    {
+      label: '주휴시간',
+      value: `${result.weeklyHolidayHours}시간`,
+    },
+    {
+      label: '연장근로시간',
+      value: `${result.overtimeWorkHours}시간`,
+    },
+  ];
+
   return {
     inputValues,
     result: mergedInputValues,
+    resultDisplay,
   };
 };
 
