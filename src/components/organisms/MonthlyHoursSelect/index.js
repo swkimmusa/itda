@@ -86,11 +86,10 @@ const StyledDayCard = styled(DayCard)`
   cursor: pointer;
   border: 2px solid ${palette('grayscale', 4)};;
   ${ifProp(
-    'disabled',
+    '$blurred',
     css`
       opacity: 0.5;
       color: ${palette('grayscale', 4)};
-      pointer-events: none;
     `,
   )};
   ${ifProp(
@@ -229,7 +228,7 @@ const MonthlyHoursSelect = ({
                 key={day}
                 date={day}
                 selected={isSelected}
-                disabled={!(
+                $blurred={!(
                   moment(formattedBaseDate).year() === moment(day).year()
                     && moment(formattedBaseDate).month() === moment(day).month()
                 )}
