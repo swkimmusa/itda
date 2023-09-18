@@ -248,7 +248,7 @@ const MonthlyHoursSelect = ({
           height: 'auto',
           backgroundColor: 'transparent',
           border: 'none',
-          width: '100vh',
+          width: '100vw',
         }}
       >
         <Card white>
