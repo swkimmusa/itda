@@ -51,6 +51,27 @@ const mergeInputValues = (inputValues) => {
   return merged;
 };
 
+const getTotalHoursWorked = (hours) => {
+  const hoursList = hours.filter((v) => v != null);
+  const minutesList = hoursList.map((range) => {
+    const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
+    return difference;
+  });
+  return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
+};
+
+// const isSameMonth = (baseDate, date) => moment(baseDate).startOf('month').diff(moment(date).startOf('month'), 'minutes') === 0;
+const isSameMonthByWeek = (dayOne, dayTwo) => {
+  const dayOneWeekRange = [
+    moment(dayOne).startOf('month').weeks(),
+    moment(dayOne).endOf('month').weeks(),
+  ];
+  return dayOneWeekRange[0] <= moment(dayTwo).weeks() && moment(dayTwo).weeks() <= dayOneWeekRange[1];
+};
+const isSameMonth = (dayOne, dayTwo) => {
+  return moment(dayOne).format('YYYY-MM') === moment(dayTwo).format('YYYY-MM');
+};
+
 const getHoursWorked = (inputValues) => {
   const {
     hoursWorked,
@@ -60,39 +81,68 @@ const getHoursWorked = (inputValues) => {
     daysWorked,
     weeklyHours,
     monthlyHours,
+    baseDate,
   } = inputValues;
+  console.log({
+    weeklyHours,
+    monthlyHours,
+  });
   const weeklyHoursList = weeklyHours.list.filter((v) => v != null);
   if (conversionType === 'weekly') {
-    const minutesList = weeklyHoursList.map((range) => {
-      const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
-      return difference;
-    });
-    console.log({
-      weeklyHours,
-      weeklyHoursList,
-      minutesList,
-      hoursWorked: minutesList.reduce((ac, cu) => ac + cu, 0) / 60,
-    });
-    return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
+    return getTotalHoursWorked(weeklyHoursList);
   }
+  const monthlyHoursList = monthlyHours.list.filter((v) => v != null).filter((v) => isSameMonth(baseDate, v[0]));
   if (conversionType === 'monthly') {
-    const minutesList = weeklyHoursList.map((range) => {
-      const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
-      return difference;
-    });
-    console.log({
-      monthlyHours,
-      weeklyHours,
-      weeklyHoursList,
-      minutesList,
-      hoursWorked: minutesList.reduce((ac, cu) => ac + cu, 0) / 60,
-    });
-    return minutesList.reduce((ac, cu) => ac + cu, 0) / 60;
+    return getTotalHoursWorked(monthlyHoursList);
   }
 
   if (hoursWorked) return hoursWorked;
 
   return hoursPerDay * daysWorked;
+};
+
+const getWeeklyHoursWorked = (inputValues) => {
+  const {
+    conversionType,
+    monthlyHours,
+  } = inputValues;
+  const { baseDate } = monthlyHours;
+
+  if (conversionType === 'weekly') return [getHoursWorked(inputValues)];
+
+  const numOfWeeks = moment(monthlyHours.baseDate).endOf('month').weeks() - moment(monthlyHours.baseDate).startOf('month').weeks() + 1;
+  const startWeekIndex = moment(monthlyHours.baseDate).startOf('month').weeks();
+  const thisMonth = monthlyHours.list.filter((range) => isSameMonthByWeek(range[0], monthlyHours.baseDate));
+  const byWeeks = _.groupBy(thisMonth, (range) => `${moment(range[0]).year()}-${moment(range[0]).weeks()}`);
+  const hoursWorkedByWeek = _.map(
+    _.times(numOfWeeks),
+    (weekOfMonth) => {
+      const rangeList = byWeeks[`${moment(baseDate).year()}-${startWeekIndex + weekOfMonth}`] || [];
+      console.log({
+        byWeeks,
+        key: `${moment(baseDate).year()}-${startWeekIndex + weekOfMonth}`,
+        rangeList,
+      });
+      return getTotalHoursWorked(rangeList) || 0;
+    },
+  );
+  console.log({
+    thisMonth,
+    byWeeks,
+    hoursWorkedByWeek,
+  });
+  return hoursWorkedByWeek;
+};
+const getMonthlyHoursWorked = (inputValues) => {
+  const {
+    conversionType,
+    monthlyHours,
+  } = inputValues;
+  const { baseDate } = monthlyHours;
+
+  if (conversionType === 'weekly') return [getHoursWorked(inputValues)];
+  const thisMonth = monthlyHours.list.filter((range) => isSameMonth(range[0], baseDate));
+  return [getTotalHoursWorked(thisMonth)];
 };
 
 const getWeeklyOverTime = (weeklyHours, hoursWorked) => {
@@ -111,36 +161,66 @@ const getWeeklyOverTime = (weeklyHours, hoursWorked) => {
   ]);
 };
 
-const getOvertimeHours = (inputValues) => {
+const getOvertimeWorkHours = (inputValues) => {
   const {
     conversionType,
-    daysWorked,
     overtimeWorkHours,
     contractWeeklyHours,
-    hoursPerDay,
     weeklyHours,
     hoursWorked,
   } = inputValues;
   if (overtimeWorkHours) return overtimeWorkHours;
 
-  if (contractWeeklyHours) return Math.max(0, hoursWorked - contractWeeklyHours);
-  // const contractWeeklyHoursOvertime = Math.max(0, hoursWorked - contractWeeklyHours);
-
-  // let currentWorkHour = 0;
+  if (contractWeeklyHours) {
+    if (conversionType === 'weekly') {
+      return Math.max(0, hoursWorked - contractWeeklyHours);
+    }
+  }
   if (conversionType === 'weekly') {
     return getWeeklyOverTime(weeklyHours, hoursWorked);
   }
-  if (conversionType === 'monthly') {
-  }
   return 0;
+};
+const getWeeklyOvertimeWorkHours = (inputValues) => {
+  const {
+    overtimeWorkHours,
+    conversionType,
+    monthlyHours,
+    contractWeeklyHours,
+    weeklyHoursWorked,
+  } = inputValues;
+  if (conversionType === 'weekly') return [getOvertimeWorkHours(inputValues)];
+  const { baseDate } = monthlyHours;
+
+  return weeklyHoursWorked.map((hours) => {
+    if (overtimeWorkHours) return overtimeWorkHours / weeklyHoursWorked.length;
+    if (contractWeeklyHours) {
+      return Math.max(0, hours - contractWeeklyHours);
+    }
+    return getWeeklyOverTime();
+  });
 };
 
 const getWeeklyHolidayHours = (inputValues) => {
   const {
     hoursWorked,
+    conversionType,
+    weeklyOvertimeWorkHours,
+    weeklyHoursWorked,
     baseWorkHours,
     contractWeeklyHours,
   } = inputValues;
+
+  if (conversionType === 'monthly') {
+    const weeklyHolidayHours = weeklyHoursWorked.map((hours, i) => {
+      const base = hours - weeklyOvertimeWorkHours[i];
+      if (hoursWorked < 15) return 0;
+      if (contractWeeklyHours < 15) return 0;
+      if (base) return (base / 5);
+      return 0;
+    });
+    return _.sum(weeklyHolidayHours);
+  }
 
   if (hoursWorked < 15) return 0;
   if (contractWeeklyHours < 15) return 0;
@@ -151,12 +231,26 @@ const getWeeklyHolidayHours = (inputValues) => {
 
 const getBaseWorkHours = (inputValues) => {
   const {
+    conversionType,
     hoursWorked,
     overtimeWorkHours,
     contractWeeklyHours,
+    weeklyHoursWorked,
+    monthlyHoursWorked,
+    weeklyOvertimeWorkHours,
   } = inputValues;
   // const multiplier
   // if (contractWeeklyHours) return Math.min(contractWeeklyHours)
+  console.log({
+    hoursWorked,
+    overtimeWorkHours,
+    monthlyHoursWorked,
+  });
+
+  if (conversionType === 'monthly') {
+    return _.sum(monthlyHoursWorked) - _.sum(weeklyOvertimeWorkHours);
+  }
+
   return hoursWorked - overtimeWorkHours;
 };
 
@@ -180,12 +274,15 @@ const getWeeklyHolidayWage = (inputValues) => {
 const getOvertimeWage = (inputValues) => {
   const {
     overtimeWorkHours,
+    weeklyOvertimeWorkHours,
     hourlyWage,
     smallBusiness,
+    conversionType,
   } = inputValues;
 
   const multiplier = smallBusiness ? 1 : 1.5;
-  return roundCurrency(multiplier * overtimeWorkHours * hourlyWage);
+  const totalWorkHours = conversionType === 'weekly' ? overtimeWorkHours : _.sum(weeklyOvertimeWorkHours);
+  return roundCurrency(multiplier * totalWorkHours * hourlyWage);
 };
 
 const calculate = (inputValues) => {
@@ -194,10 +291,13 @@ const calculate = (inputValues) => {
   mergedInputValues = {
     ...mergedInputValues,
     hoursWorked: getHoursWorked(mergedInputValues),
+    weeklyHoursWorked: getWeeklyHoursWorked(mergedInputValues),
+    monthlyHoursWorked: getMonthlyHoursWorked(mergedInputValues),
   };
   mergedInputValues = {
     ...mergedInputValues,
-    overtimeWorkHours: getOvertimeHours(mergedInputValues),
+    overtimeWorkHours: getOvertimeWorkHours(mergedInputValues),
+    weeklyOvertimeWorkHours: getWeeklyOvertimeWorkHours(mergedInputValues),
   };
   mergedInputValues = {
     ...mergedInputValues,
@@ -298,7 +398,7 @@ const calculate = (inputValues) => {
     },
     {
       label: '소정근로시간',
-      value: `${result.contractWeeklyHours || 0}시간`,
+      value: `${result.hoursWorked - result.overtimeWorkHours || 0}시간`,
     },
     {
       label: '주휴시간',

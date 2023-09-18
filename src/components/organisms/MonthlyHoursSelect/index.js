@@ -104,7 +104,7 @@ const StyledDayCard = styled(DayCard)`
 const dayOfWeekLabelList = _.times(7).map((v) => moment().day(0 + v).format('dd'));
 
 const getHoursFromMinutes = (v) => ((v - (v % 60)) / 60);
-
+const isSameDay = (a, b) => moment(a).startOf('day').diff(moment(b).startOf('day'), 'minutes') === 0;
 const MonthlyHoursSelect = ({
   onChange,
   value,
@@ -139,6 +139,7 @@ const MonthlyHoursSelect = ({
         .toISOString(),
     });
   };
+
   const daysInBaseMonth = moment(formattedBaseDate).daysInMonth();
   const startPad = moment(formattedBaseDate).startOf('month').day();
   const endPad = 7 - (moment(formattedBaseDate).endOf('month').day() + 1);
@@ -172,7 +173,15 @@ const MonthlyHoursSelect = ({
   });
   const minutesWorked = ((Number(hourV) || 0) * 60) + (Number(minuteV) || 0);
 
-  console.log(value, selectedDays);
+  console.log({
+    value,
+    baseDate,
+    formattedBaseDate,
+    rows,
+    minutesWorked,
+    hourV,
+    minuteV,
+  });
   return (
     <Container
       white
@@ -201,7 +210,7 @@ const MonthlyHoursSelect = ({
         <RowContainer key={ri}>
           {daysInWeek.map((day, i) => {
             const isSelected = selectedDays.indexOf(day) > -1;
-            const range = _.find(value.list, (v) => v[0] === day);
+            const range = _.find(value.list, (v) => isSameDay(v[0], day));
             const minutes = range && moment(range[1]).diff(moment(range[0]), 'minutes');
             return (
               <StyledDayCard
@@ -281,18 +290,21 @@ const MonthlyHoursSelect = ({
             label="시간 입력하기"
             onClick={() => {
               // const newList = list.slice();
-              const newList = _.uniqBy(
-                [
-                  ...selectedDays.map((day) => {
-                    const newValue = [
-                      moment(day).toISOString(),
-                      moment(day).add(minutesWorked, 'minutes').toISOString(),
-                    ];
-                    return newValue;
-                  }),
-                  ...list,
-                ],
-                (v) => _.get(v, [0]),
+              const newList = _.orderBy(
+                _.uniqBy(
+                  [
+                    ...selectedDays.map((day) => {
+                      const newValue = [
+                        moment(day).toISOString(),
+                        moment(day).add(minutesWorked, 'minutes').toISOString(),
+                      ];
+                      return newValue;
+                    }),
+                    ...list,
+                  ],
+                  (v) => moment(v[0]).startOf('day').toISOString(),
+                ),
+                (v) => moment(v[0]).unix(),
               );
               onChange({
                 ...value,

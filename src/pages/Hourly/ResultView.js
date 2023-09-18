@@ -11,6 +11,7 @@ import {
 import { ifProp } from 'styled-tools';
 import { format } from 'number-currency-format';
 import get from 'lodash/get';
+import _ from 'lodash';
 import {
   formatNumber, formatCurrency,
 } from '../../services/formatCurrency';
@@ -231,7 +232,7 @@ const ResultView = (props) => {
             },
             {
               label: '소정근로시간',
-              value: `${result.contractWeeklyHours || 0}시간`,
+              value: `${result.baseWorkHours || 0}시간`,
             },
             {
               label: '주휴시간',
@@ -239,7 +240,7 @@ const ResultView = (props) => {
             },
             {
               label: '연장근로시간',
-              value: `${result.overtimeWorkHours}시간`,
+              value: `${result.conversionType === 'weekly' ? result.overtimeWorkHours : _.sum(result.weeklyOvertimeWorkHours)}시간`,
             },
           ]}
         />
