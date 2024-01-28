@@ -87,11 +87,11 @@ const getHoursWorked = (inputValues) => {
     weeklyHours,
     monthlyHours,
   });
-  const weeklyHoursList = weeklyHours.list.filter((v) => v != null);
+  const weeklyHoursList = _.get(weeklyHours, 'list', []).filter((v) => v != null);
   if (conversionType === 'weekly') {
     return getTotalHoursWorked(weeklyHoursList);
   }
-  const monthlyHoursList = monthlyHours.list.filter((v) => v != null).filter((v) => isSameMonth(baseDate, v[0]));
+  const monthlyHoursList = _.get(monthlyHours, 'list', []).filter((v) => v != null).filter((v) => isSameMonth(baseDate, v[0]));
   if (conversionType === 'monthly') {
     return getTotalHoursWorked(monthlyHoursList);
   }
@@ -112,7 +112,7 @@ const getWeeklyHoursWorked = (inputValues) => {
 
   const numOfWeeks = moment(monthlyHours.baseDate).endOf('month').weeks() - moment(monthlyHours.baseDate).startOf('month').weeks() + 1;
   const startWeekIndex = moment(monthlyHours.baseDate).startOf('month').weeks();
-  const thisMonth = monthlyHours.list.filter((range) => isSameMonthByWeek(range[0], monthlyHours.baseDate));
+  const thisMonth = _.get(monthlyHours, 'list', []).filter((range) => isSameMonthByWeek(range[0], monthlyHours.baseDate));
   const byWeeks = _.groupBy(thisMonth, (range) => `${moment(range[0]).year()}-${moment(range[0]).weeks()}`);
   const hoursWorkedByWeek = _.map(
     _.times(numOfWeeks),
@@ -141,12 +141,12 @@ const getMonthlyHoursWorked = (inputValues) => {
   const { baseDate } = monthlyHours;
 
   if (conversionType === 'weekly') return [getHoursWorked(inputValues)];
-  const thisMonth = monthlyHours.list.filter((range) => isSameMonth(range[0], baseDate));
+  const thisMonth = _.get(monthlyHours, 'list', []).filter((range) => isSameMonth(range[0], baseDate));
   return [getTotalHoursWorked(thisMonth)];
 };
 
 const getWeeklyOverTime = (weeklyHours, hoursWorked) => {
-  const weeklyHoursList = weeklyHours.list.filter((v) => v != null);
+  const weeklyHoursList = _.get(weeklyHours, 'list', []).filter((v) => v != null);
 
   const dailyOvertimeMinutesList = weeklyHoursList.map((range) => {
     const difference = get(range, 'length') === 2 ? moment(range[1]).diff(moment(range[0]), 'minutes') : 0;
