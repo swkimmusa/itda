@@ -17,7 +17,7 @@ import taxBracket from '../taxBracket.json';
 
 export const nationalPensionRate = 0.09;
 export const healthInsuranceRate = 0.0709;
-export const longTermHealthInsuranceRate = 0.1281;
+export const longTermHealthInsuranceRate = 0.1295;
 export const employmentInsuranceRate = 0.018;
 
 export const maxNationalPensionRate = 265500;
