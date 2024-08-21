@@ -49,6 +49,7 @@ const SummHeaderContainer = styled(Flex)`
 const CalcSummHeader = ({
   title,
   hourly,
+  notes,
   type,
   beforeTax,
   afterTax,
@@ -94,6 +95,10 @@ const CalcSummHeader = ({
         <ValP>
           {formatCurrency(afterTax)}
         </ValP>
+      </TypeRow>
+      <TypeRow>
+        <KeyP>메모</KeyP>
+        <ValP>{notes}</ValP>
       </TypeRow>
     </StyledCard>
   );

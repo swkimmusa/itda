@@ -17,7 +17,7 @@ import Flex from '../../atoms/Flex';
 import Icon from '../../atoms/Icon';
 import Image from '../../atoms/Image';
 
-import DayCard from './DayCard';
+import DayCard, { StyledCard as BaseDayCard } from './DayCard';
 
 import { rowCardStyles } from './styles';
 
@@ -112,6 +112,7 @@ const MonthlyHoursSelect = ({
   const {
     list,
     baseDate,
+    weeklyHolidayRangeList,
   } = value;
   const [
     selectedDays,
@@ -204,6 +205,9 @@ const MonthlyHoursSelect = ({
             </HeaderCard>
           );
         })}
+        <HeaderCard>
+          주휴수당 적용
+        </HeaderCard>
       </RowContainer>
       {rows.map((daysInWeek, ri) => (
         <RowContainer key={ri}>
@@ -236,6 +240,36 @@ const MonthlyHoursSelect = ({
               />
             );
           })}
+          <BaseDayCard style={{ margin: '2px' }}>
+            <Input
+              type="checkbox"
+              checked={_.indexOf(weeklyHolidayRangeList, daysInWeek[0]) >= 0}
+              value={_.indexOf(weeklyHolidayRangeList, daysInWeek[0]) >= 0}
+              onChange={(e) => {
+                const isChecked = !!e?.target?.checked;
+                const firstDayOfWeek = daysInWeek[0];
+                console.log({
+                  isChecked,
+                  day: daysInWeek[0],
+                  weeklyHolidayRangeList,
+                  checkedProp: _.indexOf(weeklyHolidayRangeList, daysInWeek[0]),
+                  daysInWeek,
+                })
+                if (isChecked) {
+                  onChange({
+                    ...value,
+                    weeklyHolidayRangeList: _.uniq([...weeklyHolidayRangeList, firstDayOfWeek]),
+                  });
+                } else {
+                  onChange({
+                    ...value,
+                    weeklyHolidayRangeList: _.filter(weeklyHolidayRangeList, (v) => v !== firstDayOfWeek),
+                  });
+                }
+              }}
+            />
+          </BaseDayCard>
+
         </RowContainer>
       ))}
 

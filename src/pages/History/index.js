@@ -15,7 +15,9 @@ import {
 // import Card from '../../components/atoms/Card';
 import _ from 'lodash';
 import Text from '../../components/atoms/P';
-
+import {
+  unformat,
+} from 'number-currency-format';
 import Flex from '../../components/atoms/Flex';
 import Link from '../../components/atoms/Link';
 import Button from '../../components/atoms/Button';
@@ -126,7 +128,12 @@ const History = ({
   const exportData = _.map(
     filteredCalcList,
     (calc) => {
-      return calc.map((line) => line.value);
+      return calc.map((line) => {
+        if (_.endsWith(line.value, '원')) {
+          return unformat(line.value)
+        }
+        return line.value;
+      });
     },
   );
   const csvData = [
@@ -205,6 +212,7 @@ const History = ({
                     type={result.conversionType}
                     beforeTax={result.totalWage}
                     afterTax={result.netWage}
+                    notes={result.notes}
                     onDelete={(e) => {
                       console.log('stopping prop');
                       e.preventDefault();

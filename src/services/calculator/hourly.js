@@ -3,6 +3,7 @@ import _, {
   clone, get, each, max,
 } from 'lodash';
 import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   format, unformat,
 } from 'number-currency-format';
@@ -28,10 +29,12 @@ const defaultInputValues = {
   weeklyHours: {
     baseDate: null,
     list: [],
+    weeklyHolidayRangeList: [],
   },
   monthlyHours: {
     baseDate: null,
     list: [],
+    weeklyHolidayRangeList: [],
   },
 };
 const keyToLabel = {};
@@ -181,6 +184,8 @@ const getOvertimeWorkHours = (inputValues) => {
   }
   return 0;
 };
+
+
 const getWeeklyOvertimeWorkHours = (inputValues) => {
   const {
     overtimeWorkHours,
@@ -208,18 +213,45 @@ const getWeeklyHolidayHours = (inputValues) => {
     weeklyOvertimeWorkHours,
     weeklyHoursWorked,
     baseWorkHours,
+    monthlyHours,
     contractWeeklyHours,
   } = inputValues;
 
+  const { baseDate, weeklyHolidayRangeList } = monthlyHours;
+  console.log({
+    weeklyHoursWorked
+  })
   if (conversionType === 'monthly') {
-    const weeklyHolidayHours = weeklyHoursWorked.map((hours, i) => {
-      const base = hours - weeklyOvertimeWorkHours[i];
-      if (hoursWorked < 15) return 0;
-      if (contractWeeklyHours < 15) return 0;
-      if (base) return (base / 5);
-      return 0;
-    });
-    return _.sum(weeklyHolidayHours);
+    const weeklyHolidayHours = weeklyHoursWorked
+      // .filter((hours, i) => {
+      //   const monthlyHoursList = _.get(monthlyHours, 'list', []).filter((v) => v != null).filter((v) => isSameMonth(baseDate, v[0]));
+      // })
+      .map((hours, i) => {
+        const weekIndex = dayjs(baseDate).startOf('month').weeks() + i;
+        const firstDayOfWeek = dayjs(baseDate).weeks(weekIndex).startOf('week').hour(9);
+        const firstDayOfWeekISO = firstDayOfWeek.toISOString()
+        console.log({
+          weeklyHolidayRangeList,
+          firstDayOfWeekISO,
+          index: _.indexOf(weeklyHolidayRangeList, firstDayOfWeekISO),
+          hours,
+        })
+        if (_.indexOf(weeklyHolidayRangeList, firstDayOfWeekISO) >= 0) {
+          return hours
+        }
+        return 0;
+      })
+      .map((hours, i) => {
+        const base = hours - weeklyOvertimeWorkHours[i];
+        if (hoursWorked < 15) return 0;
+        if (contractWeeklyHours < 15) return 0;
+        if (base) return (base / 5);
+        return 0;
+      });
+      console.log({
+        weeklyHolidayHours
+      })
+      return _.sum(weeklyHolidayHours);
   }
 
   if (hoursWorked < 15) return 0;
@@ -327,7 +359,9 @@ const calculate = (inputValues) => {
     ...mergedInputValues,
     totalWage: roundCurrency(mergedInputValues.overtimeWage + mergedInputValues.baseWage + mergedInputValues.weeklyHolidayWage),
   };
-
+  console.log({
+    totalWage: mergedInputValues.totalWage
+  })
   mergedInputValues = {
     ...mergedInputValues,
     employmentInsurance: roundCurrency(mergedInputValues.totalWage * 0.009),
@@ -410,6 +444,7 @@ const calculate = (inputValues) => {
     },
   ];
   console.log({
+    mergedInputValues,
     inputValues,
     result,
     resultDisplay,

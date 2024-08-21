@@ -13,7 +13,7 @@ import Image from '../../atoms/Image';
 
 import { rowCardStyles } from './styles';
 
-const StyledCard = styled(Card)`
+export const StyledCard = styled(Card)`
   padding: 12px;
   flex-direction: column;
   align-items: center;

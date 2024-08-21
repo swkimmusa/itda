@@ -130,7 +130,19 @@ const Input = ({ ...props }) => {
     inputStyle,
   } = props;
   if (type === 'textarea') {
-    return <StyledTextarea {...props} style={inputStyle} />;
+    return (
+    <Wrapper {...props}>
+    {label ? (
+      <LabelWrapper>
+        <Label>
+          {label}
+        </Label>
+        {!required && <RequiredText>(선택)</RequiredText>}
+      </LabelWrapper>
+    ) : null}
+    <StyledTextarea {...props} style={inputStyle} />
+  </Wrapper>
+    );
   }
   if (type === 'radio' || type === 'checkbox') {
     return (

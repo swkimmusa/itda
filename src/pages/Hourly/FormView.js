@@ -181,10 +181,12 @@ const getDefaultInitialValues = () => ({
   weeklyHours: {
     baseDate: moment().toISOString(),
     list: [],
+    weeklyHolidayRangeList: [],
   },
   monthlyHours: {
     baseDate: moment().toISOString(),
     list: [],
+    weeklyHolidayRangeList: [],
   },
 });
 
@@ -321,6 +323,14 @@ const FormView = (props) => {
                 type="number"
               />
               <InlineModal showOnce>근로계약서상 명시한 근로시간이 1주 15시간 미만 -> 주휴수당 미발생, 국민연금/건강보험 적용제외, 주휴수당 등을 적용하고 싶지 않은 경우, 아래 2가지 사유에 해당하는 경우 "X"로 입력하고 계산하도록 안내</InlineModal>
+            </FieldSection>
+            <FieldSection>
+              <FieldComponent
+                name="notes"
+                placeholder=""
+                label="추가 메모"
+                type="textarea"
+              />
             </FieldSection>
           </Step>
           <PageAction actions={[]}>

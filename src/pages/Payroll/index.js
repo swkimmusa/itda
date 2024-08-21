@@ -34,6 +34,9 @@ import calc, {
 import calcActions from '../../store/calculation/actions';
 import Card from '../../components/atoms/Card';
 import AntDTable from '../../components/organisms/AntdTable';
+import {
+  unformat,
+} from 'number-currency-format';
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
@@ -210,7 +213,12 @@ const PayrollView = (props) => {
   const exportData = _.map(
     filteredCalcList,
     (calc) => {
-      return calc.map((line) => line.value);
+      return calc.map((line) => {
+        if (_.endsWith(line.value, '원')) {
+          return Number(unformat(line.value));
+        }
+        return line.value;
+      });
     },
   );
   const csvData = [
